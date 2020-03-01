@@ -1,0 +1,19 @@
+name: bloc_filter_search_list
+version: 0.0.1
+description: >
+  Extension to flutter_bloc that handles the underlying logic to filter and search list view data dynamically.
+author: Dana Hartweg <dana.hartweg@gmail.com>
+homepage: https://github.com/danahartweg
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  pedantic: "^1.8.0+1"
