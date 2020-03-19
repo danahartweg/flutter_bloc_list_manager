@@ -6,14 +6,20 @@ author: Dana Hartweg <dana.hartweg@gmail.com>
 homepage: https://github.com/danahartweg
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
+  equatable: ^1.1.0
+  flutter_bloc: ^3.2.0
+  meta: ^1.1.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  bloc_test: ^4.0.0
+  mockito: ^4.1.1
   pedantic: "^1.8.0+1"
