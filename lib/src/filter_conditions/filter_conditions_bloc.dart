@@ -43,7 +43,8 @@ class FilterConditionsBloc<T extends ItemSource, S>
       // ensure only unique entries are present and that the entries are sorted...
       // removing duplicates before sorting will save a few cycles
       _filterProperties.forEach((property) {
-        valuesForProperties[property] = valuesForProperties[property].toSet().toList()..sort();
+        valuesForProperties[property] =
+            valuesForProperties[property].toSet().toList()..sort();
       });
 
       add(SetAvailableValuesForProperties(valuesForProperties));
@@ -58,16 +59,81 @@ class FilterConditionsBloc<T extends ItemSource, S>
     FilterConditionsEvent event,
   ) async* {
     if (event is SetAvailableValuesForProperties) {
-      yield* _mapSetAvailableValuesForPropertiesToState(event);
+      yield _mapSetAvailableValuesForPropertiesToState(event);
+    } else if (event is AddCondition) {
+      yield _addConditionToActiveConditions(event);
+    } else if (event is RemoveCondition) {
+      yield _removeConditionFromActiveConditions(event);
     }
   }
 
-  Stream<FilterConditionsState> _mapSetAvailableValuesForPropertiesToState(
+  FilterConditionsState _mapSetAvailableValuesForPropertiesToState(
     SetAvailableValuesForProperties event,
-  ) async* {
-    yield ConditionsInitialized(
+  ) {
+    return ConditionsInitialized(
       availableConditions: event.valuesForProperties,
       activeConditions: {},
+    );
+  }
+
+  FilterConditionsState _addConditionToActiveConditions(
+    AddCondition event,
+  ) {
+    if (state is ConditionsUninitialized) {
+      return this.state;
+    }
+
+    final currentState = (this.state as ConditionsInitialized);
+
+    if ((currentState.activeConditions[event.property] ?? [])
+        .contains(event.value)) {
+      return currentState;
+    }
+
+    final activeConditions =
+        Map.fromEntries(currentState.activeConditions.entries);
+
+    activeConditions.update(
+      event.property,
+      (activeValues) => List.from([...activeValues, event.value]),
+      ifAbsent: () => [event.value],
+    );
+
+    return ConditionsInitialized(
+      availableConditions: currentState.availableConditions,
+      activeConditions: activeConditions,
+    );
+  }
+
+  FilterConditionsState _removeConditionFromActiveConditions(
+    RemoveCondition event,
+  ) {
+    if (state is ConditionsUninitialized) {
+      return this.state;
+    }
+
+    final currentState = (this.state as ConditionsInitialized);
+    final targetCondition = currentState.activeConditions[event.property];
+
+    if (targetCondition == null || !targetCondition.contains(event.value)) {
+      return currentState;
+    }
+
+    final activeConditions =
+        Map.fromEntries(currentState.activeConditions.entries);
+
+    activeConditions.update(
+      event.property,
+      (activeValues) => List.from(activeValues)..remove(event.value),
+    );
+
+    if (activeConditions[event.property].isEmpty) {
+      activeConditions.remove(event.property);
+    }
+
+    return ConditionsInitialized(
+      availableConditions: currentState.availableConditions,
+      activeConditions: activeConditions,
     );
   }
 
