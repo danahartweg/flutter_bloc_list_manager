@@ -11,11 +11,11 @@ class EmptySource extends ItemListState {
   List<Object> get props => ['Empty Source'];
 }
 
-class NoFilteredResults extends ItemListState {
-  const NoFilteredResults();
+class NoResults extends ItemListState {
+  const NoResults();
 
   @override
-  List<Object> get props => ['No Filtered Results'];
+  List<Object> get props => ['No Results'];
 }
 
 class ItemListResults<I> extends ItemListState {

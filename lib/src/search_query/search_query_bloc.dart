@@ -16,7 +16,7 @@ class SearchQueryBloc extends Bloc<SearchQueryEvent, String> {
     if (event is ClearSearchQuery) {
       yield '';
     } else if (event is SetSearchQuery) {
-      yield event.query;
+      yield event.query.toLowerCase();
     }
   }
 }

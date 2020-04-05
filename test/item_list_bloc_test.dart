@@ -10,6 +10,9 @@ class MockFilterConditionsBloc
     extends MockBloc<FilterConditionsEvent, FilterConditionsState>
     implements FilterConditionsBloc {}
 
+class MockSearchQueryBloc extends MockBloc<SearchQueryEvent, String>
+    implements SearchQueryBloc {}
+
 void main() {
   const _mockItem1 = MockItemClass(
     id: 'idValue1',
@@ -32,14 +35,17 @@ void main() {
 
   group('ItemListBloc', () {
     MockFilterConditionsBloc _filterConditionsBloc;
+    MockSearchQueryBloc _searchQueryBloc;
     MockSourceBloc _sourceBloc;
 
     setUp(() {
       _filterConditionsBloc = MockFilterConditionsBloc();
+      _searchQueryBloc = MockSearchQueryBloc();
       _sourceBloc = MockSourceBloc();
 
       // ensure bloc listeners can be attached
       whenListen(_filterConditionsBloc, Stream.value(null));
+      whenListen(_searchQueryBloc, Stream.value(null));
       whenListen(_sourceBloc, Stream.value(null));
     });
 
@@ -49,6 +55,7 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
@@ -65,6 +72,7 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
@@ -78,10 +86,12 @@ void main() {
           activeConditions: {},
           availableConditions: {},
         ));
+        when(_searchQueryBloc.state).thenReturn('');
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
@@ -95,6 +105,7 @@ void main() {
           activeConditions: {},
           availableConditions: {},
         ));
+        when(_searchQueryBloc.state).thenReturn('');
 
         when(_sourceBloc.state).thenReturn(
           MockSourceBlocClassItems([_mockItem1]),
@@ -103,6 +114,7 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
@@ -120,6 +132,7 @@ void main() {
           },
           availableConditions: {},
         ));
+        when(_searchQueryBloc.state).thenReturn('');
 
         when(_sourceBloc.state).thenReturn(
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -128,12 +141,11 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
-        NoFilteredResults()
-      ],
+      expect: [NoResults()],
     );
 
     blocTest(
@@ -145,6 +157,7 @@ void main() {
           },
           availableConditions: {},
         ));
+        when(_searchQueryBloc.state).thenReturn('');
 
         when(_sourceBloc.state).thenReturn(
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -153,6 +166,7 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
@@ -171,6 +185,7 @@ void main() {
           },
           availableConditions: {},
         ));
+        when(_searchQueryBloc.state).thenReturn('');
 
         when(_sourceBloc.state).thenReturn(
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -179,12 +194,93 @@ void main() {
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
             MockSourceBlocState>(
           filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
         );
       },
       expect: [
         ItemListResults([_mockItem1, _mockItem3])
       ],
+    );
+
+    blocTest(
+      'returns source items matching only a query',
+      build: () async {
+        when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
+          activeConditions: {},
+          availableConditions: {},
+        ));
+        when(_searchQueryBloc.state).thenReturn('value2');
+
+        when(_sourceBloc.state).thenReturn(
+          MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+        );
+
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
+            MockSourceBlocState>(
+          filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
+          sourceBloc: _sourceBloc,
+          searchProperties: ['extra'],
+        );
+      },
+      expect: [
+        ItemListResults([_mockItem2])
+      ],
+    );
+
+    blocTest(
+      'returns source items matching a query after filtering',
+      build: () async {
+        when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
+          activeConditions: {
+            'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
+          },
+          availableConditions: {},
+        ));
+        when(_searchQueryBloc.state).thenReturn('value2');
+
+        when(_sourceBloc.state).thenReturn(
+          MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+        );
+
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
+            MockSourceBlocState>(
+          filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
+          sourceBloc: _sourceBloc,
+          searchProperties: ['extra'],
+        );
+      },
+      expect: [
+        ItemListResults([_mockItem2])
+      ],
+    );
+
+    blocTest(
+      'sets filter empty state with no source items matching query',
+      build: () async {
+        when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
+          activeConditions: {
+            'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
+          },
+          availableConditions: {},
+        ));
+        when(_searchQueryBloc.state).thenReturn('123');
+
+        when(_sourceBloc.state).thenReturn(
+          MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+        );
+
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
+            MockSourceBlocState>(
+          filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
+          sourceBloc: _sourceBloc,
+          searchProperties: ['extra'],
+        );
+      },
+      expect: [NoResults()],
     );
   });
 }

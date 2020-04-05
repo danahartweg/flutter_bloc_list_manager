@@ -26,5 +26,12 @@ void main() {
       },
       expect: ['search1', '', 'search2', ''],
     );
+
+    blocTest(
+      'stores query state lowercase',
+      build: () => Future.value(SearchQueryBloc()),
+      act: (bloc) => bloc.add(SetSearchQuery('ABC')),
+      expect: ['abc'],
+    );
   });
 }
