@@ -13,7 +13,7 @@ class ConditionsUninitialized extends FilterConditionsState {
 
 class ConditionsInitialized extends FilterConditionsState {
   final Map<String, List<String>> availableConditions;
-  final Map<String, List<String>> activeConditions;
+  final Set<String> activeConditions;
 
   const ConditionsInitialized(
       {@required this.availableConditions, @required this.activeConditions});

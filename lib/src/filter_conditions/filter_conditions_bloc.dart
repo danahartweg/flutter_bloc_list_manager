@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import '../item_source.dart';
+import '../utils.dart';
 
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
@@ -23,31 +24,43 @@ class FilterConditionsBloc<T extends ItemSource, S>
         assert(sourceBloc != null),
         _filterProperties = filterProperties,
         _sourceBloc = sourceBloc {
-    _sourceSubscription = _sourceBloc.listen((state) {
-      if (state is! T) {
+    _sourceSubscription = _sourceBloc.listen((sourceState) {
+      if (sourceState is! T) {
         return;
       }
 
-      final valuesForProperties = _generateFilterPropertiesMap();
+      final availableConditions = _generateFilterPropertiesMap();
+      final Set<String> availableConditionKeys = Set();
 
-      (state as T).items.forEach((item) {
+      (sourceState as T).items.forEach((item) {
         _filterProperties.forEach((property) {
           final value = item[property];
 
           if (value is String && value.isNotEmpty) {
-            valuesForProperties[property].add(value);
+            final conditionKey = generateConditionKey(property, value);
+
+            availableConditions[property].add(value);
+            availableConditionKeys.add(conditionKey);
           }
         });
       });
 
-      // ensure only unique entries are present and that the entries are sorted...
-      // removing duplicates before sorting will save a few cycles
+      final currentState = state;
+      final Set<String> activeConditions = currentState is ConditionsInitialized
+          ? currentState.activeConditions
+          : Set();
+
       _filterProperties.forEach((property) {
-        valuesForProperties[property] =
-            valuesForProperties[property].toSet().toList()..sort();
+        // ensure only unique entries are present and that the entries are sorted...
+        // removing duplicates before sorting will save a few cycles
+        availableConditions[property] =
+            availableConditions[property].toSet().toList()..sort();
       });
 
-      add(SetAvailableValuesForProperties(valuesForProperties));
+      add(RefreshConditions(
+        activeConditions: activeConditions.intersection(availableConditionKeys),
+        availableConditions: availableConditions,
+      ));
     });
   }
 
@@ -58,8 +71,11 @@ class FilterConditionsBloc<T extends ItemSource, S>
   Stream<FilterConditionsState> mapEventToState(
     FilterConditionsEvent event,
   ) async* {
-    if (event is SetAvailableValuesForProperties) {
-      yield _mapSetAvailableValuesForPropertiesToState(event);
+    if (event is RefreshConditions) {
+      yield ConditionsInitialized(
+        activeConditions: event.activeConditions,
+        availableConditions: event.availableConditions,
+      );
     } else if (event is AddCondition) {
       yield _addConditionToActiveConditions(event);
     } else if (event is RemoveCondition) {
@@ -67,41 +83,27 @@ class FilterConditionsBloc<T extends ItemSource, S>
     }
   }
 
-  FilterConditionsState _mapSetAvailableValuesForPropertiesToState(
-    SetAvailableValuesForProperties event,
-  ) {
-    return ConditionsInitialized(
-      availableConditions: event.valuesForProperties,
-      activeConditions: {},
-    );
-  }
-
   FilterConditionsState _addConditionToActiveConditions(
     AddCondition event,
   ) {
     if (state is ConditionsUninitialized) {
-      return this.state;
+      return state;
     }
 
-    final currentState = (this.state as ConditionsInitialized);
+    final currentState = (state as ConditionsInitialized);
+    final conditionKey = generateConditionKey(event.property, event.value);
 
-    if ((currentState.activeConditions[event.property] ?? [])
-        .contains(event.value)) {
+    if (currentState.activeConditions.contains(conditionKey)) {
       return currentState;
     }
 
-    final activeConditions =
-        Map.fromEntries(currentState.activeConditions.entries);
-
-    activeConditions.update(
-      event.property,
-      (activeValues) => List.from([...activeValues, event.value]),
-      ifAbsent: () => [event.value],
-    );
+    final Set<String> activeConditions =
+        Set.from(currentState.activeConditions);
+    activeConditions.add(conditionKey);
 
     return ConditionsInitialized(
-      availableConditions: currentState.availableConditions,
       activeConditions: activeConditions,
+      availableConditions: currentState.availableConditions,
     );
   }
 
@@ -109,31 +111,23 @@ class FilterConditionsBloc<T extends ItemSource, S>
     RemoveCondition event,
   ) {
     if (state is ConditionsUninitialized) {
-      return this.state;
+      return state;
     }
 
-    final currentState = (this.state as ConditionsInitialized);
-    final targetCondition = currentState.activeConditions[event.property];
+    final currentState = (state as ConditionsInitialized);
+    final conditionKey = generateConditionKey(event.property, event.value);
 
-    if (targetCondition == null || !targetCondition.contains(event.value)) {
+    if (!currentState.activeConditions.contains(conditionKey)) {
       return currentState;
     }
 
-    final activeConditions =
-        Map.fromEntries(currentState.activeConditions.entries);
-
-    activeConditions.update(
-      event.property,
-      (activeValues) => List.from(activeValues)..remove(event.value),
-    );
-
-    if (activeConditions[event.property].isEmpty) {
-      activeConditions.remove(event.property);
-    }
+    final Set<String> activeConditions =
+        Set.from(currentState.activeConditions);
+    activeConditions.remove(conditionKey);
 
     return ConditionsInitialized(
-      availableConditions: currentState.availableConditions,
       activeConditions: activeConditions,
+      availableConditions: currentState.availableConditions,
     );
   }
 
@@ -143,6 +137,15 @@ class FilterConditionsBloc<T extends ItemSource, S>
       key: (item) => item,
       value: (_) => [],
     );
+  }
+
+  bool isConditionActive(String property, String value) {
+    final currentState = state;
+    final conditionKey = generateConditionKey(property, value);
+
+    return currentState is ConditionsInitialized
+        ? currentState.activeConditions.contains(conditionKey)
+        : false;
   }
 
   @override

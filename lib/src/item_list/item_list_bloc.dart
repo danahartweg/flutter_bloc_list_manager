@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 import 'package:bloc_filter_search_list/bloc_filter_search_list.dart';
+import '../utils.dart';
 
 part 'item_list_state.dart';
 
@@ -88,8 +89,10 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource, S>
       return items;
     }
 
-    return items.where((item) => activeConditions.entries
-        .any((entry) => entry.value.contains(item[entry.key])));
+    return items.where((item) => activeConditions.any((conditionKey) {
+          final conditionKeyValue = splitConditionKey(conditionKey);
+          return item[conditionKeyValue[0]] == conditionKeyValue[1];
+        }));
   }
 
   Iterable<I> _searchSource(String searchQuery, Iterable<I> items) {

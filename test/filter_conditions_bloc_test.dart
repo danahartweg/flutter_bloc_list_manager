@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'package:mockito/mockito.dart';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:bloc_filter_search_list/bloc_filter_search_list.dart';
+import 'package:bloc_filter_search_list/src/utils.dart';
 
 import './mocks.dart';
 
@@ -27,9 +31,20 @@ void main() {
 
   group('FilterConditionsBloc', () {
     MockSourceBloc _sourceBloc;
+    StreamController<MockSourceBlocState> _sourceStreamController;
 
     setUp(() {
       _sourceBloc = MockSourceBloc();
+      _sourceStreamController = StreamController();
+
+      when(_sourceBloc.listen(any)).thenAnswer((invocation) {
+        return _sourceStreamController.stream.listen(invocation
+            .positionalArguments.first as Function(MockSourceBlocState));
+      });
+    });
+
+    tearDown(() {
+      _sourceStreamController.close();
     });
 
     blocTest(
@@ -75,7 +90,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {},
           )
         ],
@@ -97,7 +112,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
@@ -129,7 +144,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': ['idValue'],
               'extra': ['extraValue'],
@@ -161,7 +176,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'name': [],
               'extra': [],
@@ -188,7 +203,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -216,17 +231,74 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem2.id, _mockItem3.id],
               'extra': [_mockItem2.extra, _mockItem3.extra],
+            },
+          )
+        ],
+      );
+
+      blocTest(
+        'retains remaining valid active conditions when the source list updates',
+        build: () async =>
+            FilterConditionsBloc<MockSourceBlocClassItems, MockSourceBlocState>(
+          sourceBloc: _sourceBloc,
+          filterProperties: ['id', 'extra'],
+        ),
+        act: (bloc) async {
+          _sourceStreamController.add(MockSourceBlocClassItems([_mockItem1]));
+          await Future.delayed(Duration());
+
+          bloc.add(AddCondition(property: 'id', value: _mockItem1.id));
+          await Future.delayed(Duration());
+
+          _sourceStreamController
+              .add(MockSourceBlocClassItems([_mockItem1, _mockItem2]));
+          await Future.delayed(Duration());
+
+          _sourceStreamController.add(MockSourceBlocClassItems([_mockItem2]));
+          await Future.delayed(Duration());
+        },
+        expect: [
+          ConditionsInitialized(
+            activeConditions: Set(),
+            availableConditions: {
+              'id': [_mockItem1.id],
+              'extra': [_mockItem1.extra],
+            },
+          ),
+          ConditionsInitialized(
+            activeConditions: Set.from([
+              generateConditionKey('id', _mockItem1.id),
+            ]),
+            availableConditions: {
+              'id': [_mockItem1.id],
+              'extra': [_mockItem1.extra],
+            },
+          ),
+          ConditionsInitialized(
+            activeConditions: Set.from([
+              generateConditionKey('id', _mockItem1.id),
+            ]),
+            availableConditions: {
+              'id': [_mockItem1.id, _mockItem2.id],
+              'extra': [_mockItem1.extra, _mockItem2.extra],
+            },
+          ),
+          ConditionsInitialized(
+            activeConditions: Set(),
+            availableConditions: {
+              'id': [_mockItem2.id],
+              'extra': [_mockItem2.extra],
             },
           )
         ],
@@ -249,7 +321,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id],
               'extra': [_mockItem1.extra, _mockItem2.extra],
@@ -275,7 +347,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -311,7 +383,7 @@ void main() {
             filterProperties: [],
           );
         },
-        act: (bloc) {
+        act: (bloc) async {
           bloc
             ..add(AddCondition(property: 'id', value: '123'))
             ..add(AddCondition(property: 'extra', value: 'something'))
@@ -325,40 +397,41 @@ void main() {
         skip: 2,
         expect: [
           ConditionsInitialized(
-            activeConditions: {
-              'id': ['123'],
-            },
+            activeConditions: Set.from([
+              generateConditionKey('id', '123'),
+            ]),
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: {
-              'id': ['123'],
-              'extra': ['something'],
-            },
+            activeConditions: Set.from([
+              generateConditionKey('id', '123'),
+              generateConditionKey('extra', 'something'),
+            ]),
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: {
-              'id': ['123', '456'],
-              'extra': ['something'],
-            },
+            activeConditions: Set.from([
+              generateConditionKey('id', '123'),
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+            ]),
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: {
-              'id': ['456'],
-              'extra': ['something'],
-            },
+            activeConditions: Set.from([
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+            ]),
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: {
-              'extra': ['something'],
-            },
+            activeConditions: Set.from([
+              generateConditionKey('extra', 'something'),
+            ]),
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: {},
+            activeConditions: Set(),
             availableConditions: {},
           ),
         ],
