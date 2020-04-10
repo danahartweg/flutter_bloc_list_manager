@@ -57,20 +57,10 @@ class MockItemClass extends Equatable implements ItemClassWithPropGetter {
 }
 
 class MockSourceBlocClassItems extends MockSourceBlocState
-    implements ItemSourceClass<MockItemClass> {
+    implements ItemSource<MockItemClass> {
   final items;
 
   const MockSourceBlocClassItems(this.items);
-
-  @override
-  List<Object> get props => [items];
-}
-
-class MockSourceBlocMapItems extends MockSourceBlocState
-    implements ItemSourceMap<Map<String, dynamic>> {
-  final items;
-
-  const MockSourceBlocMapItems(this.items);
 
   @override
   List<Object> get props => [items];

@@ -122,38 +122,6 @@ void main() {
       );
 
       blocTest(
-        'extracts each requested filter property from a map',
-        build: () async {
-          whenListen(
-            _sourceBloc,
-            Stream.value(MockSourceBlocMapItems([
-              {
-                'id': 'idValue',
-                'name': 'nameValue',
-                'extra': 'extraValue',
-                'conditional': true,
-              },
-            ])),
-          );
-
-          return FilterConditionsBloc<MockSourceBlocMapItems,
-              MockSourceBlocState>(
-            sourceBloc: _sourceBloc,
-            filterProperties: ['id', 'extra'],
-          );
-        },
-        expect: [
-          ConditionsInitialized(
-            activeConditions: Set(),
-            availableConditions: {
-              'id': ['idValue'],
-              'extra': ['extraValue'],
-            },
-          )
-        ],
-      );
-
-      blocTest(
         'ignores null, empty, and non-string values',
         build: () async {
           whenListen(
