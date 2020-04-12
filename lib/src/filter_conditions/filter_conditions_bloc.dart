@@ -10,6 +10,18 @@ import '../utils.dart';
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
 
+/// {@template filterconditionsbloc}
+/// Attaches to the provided [_sourceBloc] in order to dynamically generate
+/// groupings of available conditions that correspond to the
+/// provided [_filterProperties].
+///
+/// Additionally exposes events to add or remove active conditions
+/// from the state.
+///
+/// There should be no need to ever manually construct a [FilterConditionsBloc].
+/// It should, instead, be retrieved from within the `BlocFilterSearchList`
+/// in order to construct whatever filtering UI you desire.
+/// {@endtemplate}
 class FilterConditionsBloc<T extends ItemSource>
     extends Bloc<FilterConditionsEvent, FilterConditionsState> {
   final List<String> _filterProperties;
@@ -17,6 +29,7 @@ class FilterConditionsBloc<T extends ItemSource>
 
   StreamSubscription _sourceSubscription;
 
+  /// {@macro filterconditionsbloc}
   FilterConditionsBloc({
     @required List<String> filterProperties,
     @required Bloc sourceBloc,
@@ -51,8 +64,8 @@ class FilterConditionsBloc<T extends ItemSource>
           : <String>{};
 
       for (final property in _filterProperties) {
-        // ensure only unique entries are present and that entries are sorted...
-        // removing duplicates before sorting will save a few cycles
+        // Ensure only unique entries are present and that entries are sorted.
+        // Removing duplicates before sorting will save a few cycles.
         availableConditions[property] =
             availableConditions[property].toSet().toList()..sort();
       }
@@ -137,6 +150,8 @@ class FilterConditionsBloc<T extends ItemSource>
     );
   }
 
+  /// Helper that checks whether a [value] for a given [property] exists in
+  /// the current state as an active condition.
   bool isConditionActive(String property, String value) {
     final currentState = state;
     final conditionKey = generateConditionKey(property, value);
