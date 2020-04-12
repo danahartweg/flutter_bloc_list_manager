@@ -1,15 +1,16 @@
 # Flutter Bloc List Manager
 
+[![Pub](https://img.shields.io/pub/v/flutter_bloc.svg)](https://pub.dev/packages/flutter_bloc_list_manager)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
-A Flutter package built to work with [flutter_bloc](https://pub.dev/packages/flutter_bloc) that makes it easy to manage filtering and searching a list of items while allowing you to concentrate on building your UI.
+A Flutter package built on top of [flutter_bloc](https://pub.dev/packages/flutter_bloc) that makes it easy to manage filtering and searching a list of items while allowing you to concentrate on building your UI.
 
 ## Widgets
 
 ### ListManager Widget
 
-The `ListManager` widget is the entry-point to accessing the blocs provided by this package. There is no need to manually create any of the other blocs this package provides, they are all available from the build context given to the child widget.
+The `ListManager` widget is the entry-point to accessing the blocs provided by this package. There is no need to manually create any of the other blocs this package provides, they are all available from the build context underneath the `ListManager` widget.
 
 `ListManager` should be established with:
 
@@ -19,32 +20,32 @@ _Types_
 + `B` - the bloc that contains the above state
 
 _Parameters_
-+ `filterProperties` - string properties that exist on your item class `I` that should be used to generate filter conditions
-+ `searchProperties` - string properties that exist on your item class `I` that should be used to run search queries against
++ `filterProperties` - properties that exist on your item class `I` that should be used to generate filter conditions
++ `searchProperties` - properties that exist on your item class `I` that should be used to run search queries against
 + `child` - the widget to be rendered by the `ListManager`, which will have access to the remaining blocs
 
 _Example_
 ```dart
-BlocProvider<YourItemSourceBloc>(
-  create: (_) => YourItemSourceBloc(),
-  child: ListManager<YourItemClass, YourSourceBlocStateWithItems, YourItemSourceBloc>(
+BlocProvider<SourceBloc>(
+  create: (_) => SourceBloc(),
+  child: ListManager<ItemClass, SourceLoaded, SourceBloc>(
     filterProperties: ['property1'],
     searchProperties: ['property2'],
     child: Column(
       children: [
         BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
           builder: (context, state) {
-            return Text('Render your filter conditions UI.');
+            return Text('Render filter conditions UI.');
           },
         ),
         BlocBuilder<SearchQueryBloc, String>(
           builder: (context, state) {
-            return Text('Render your Search UI.');
+            return Text('Render Search UI.');
           },
         ),
         BlocBuilder<ItemListBloc, ItemListState>(
           builder: (context, state) {
-            return Text('Render your list UI.');
+            return Text('Render list UI.');
           },
         ),
       ],
@@ -55,7 +56,7 @@ BlocProvider<YourItemSourceBloc>(
 
 ### FilterConditionsBloc
 
-The state of the `FilterConditionsBloc` is used to render your filtering UI. These conditions will be updated whenever the source bloc is updated.
+State from `FilterConditionsBloc` is used to render your filtering UI. Filter conditions will be updated whenever the source bloc is updated.
 
 _Example_
 ```dart
@@ -83,7 +84,7 @@ BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
 )
 ```
 
-Events can be dispatched against the `FilterConditionsBloc` to add/remove active property/value condition pairs. Whenever the source bloc is updated, active conditions that no longer apply are removed automatically.
+Events can be dispatched against the `FilterConditionsBloc` to add/remove active property/value condition pairs. Whenever the source bloc is updated, active conditions that no longer apply are automatically removed.
 
 _Example_
 ```dart
@@ -103,7 +104,7 @@ context.bloc<SearchQueryBloc>().add(ClearSearchQuery());
 
 ### ItemListBloc
 
-The `ItemListBloc` is responsible for connecting all of the other blocs, performing the actual filtering and searching, and providing state in order to render your list UI. There is never a reason to dispatch events to this bloc.
+`ItemListBloc` is responsible for connecting all of the other blocs, performing the actual filtering and searching, and providing state in order to render your list UI. There is never a reason to dispatch events to this bloc.
 
 _Example_
 ```dart
@@ -175,7 +176,7 @@ class ItemClass extends Equatable implements ItemClassWithAccessor {
 
 ### ItemSourceState
 
-You are free to manage your source bloc however you see fit. The only requirement in order to instantiate a `ListManager` is that one of the states of your source bloc must implement `ItemSourceState` so the package internals know when source items are actually flowing through your source bloc.
+You are free to manage your source bloc however you see fit. The only requirement in order to instantiate a `ListManager` is that one of the states of your source bloc must implement `ItemSourceState`. This allows blocs in this package to know when source items are actually flowing through your source bloc.
 
 _Example_
 ```dart
