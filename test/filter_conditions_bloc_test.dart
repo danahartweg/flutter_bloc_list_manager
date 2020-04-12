@@ -88,7 +88,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {},
           )
         ],
@@ -109,7 +109,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
@@ -140,7 +140,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'name': [],
               'extra': [],
@@ -166,7 +166,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -193,14 +193,14 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem2.id, _mockItem3.id],
               'extra': [_mockItem2.extra, _mockItem3.extra],
@@ -210,7 +210,7 @@ void main() {
       );
 
       blocTest(
-        'retains remaining valid active conditions when the source list updates',
+        'retains valid active conditions when the source list updates',
         build: () async => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
           filterProperties: ['id', 'extra'],
@@ -231,32 +231,32 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', _mockItem1.id),
-            ]),
+            },
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', _mockItem1.id),
-            ]),
+            },
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id],
               'extra': [_mockItem1.extra, _mockItem2.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem2.id],
               'extra': [_mockItem2.extra],
@@ -281,7 +281,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id],
               'extra': [_mockItem1.extra, _mockItem2.extra],
@@ -306,7 +306,7 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -354,41 +354,41 @@ void main() {
         skip: 2,
         expect: [
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', '123'),
-            ]),
+            },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', '123'),
               generateConditionKey('extra', 'something'),
-            ]),
+            },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', '123'),
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
-            ]),
+            },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
-            ]),
+            },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: Set.from([
+            activeConditions: <String>{
               generateConditionKey('extra', 'something'),
-            ]),
+            },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: Set(),
+            activeConditions: <String>{},
             availableConditions: {},
           ),
         ],

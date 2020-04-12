@@ -34,20 +34,20 @@ class MockItemClass extends Equatable implements ItemClassWithPropGetter {
   dynamic operator [](String prop) {
     switch (prop) {
       case 'id':
-        return this.id;
+        return id;
         break;
       case 'name':
-        return this.name;
+        return name;
         break;
       case 'extra':
-        return this.extra;
+        return extra;
         break;
       case 'conditional':
-        return this.conditional;
+        return conditional;
         break;
       default:
         throw ArgumentError(
-          'Property `${prop}` does not exist on PlantVarietyIndex.',
+          'Property `$prop` does not exist on PlantVarietyIndex.',
         );
     }
   }
@@ -58,7 +58,7 @@ class MockItemClass extends Equatable implements ItemClassWithPropGetter {
 
 class MockSourceBlocClassItems extends MockSourceBlocState
     implements ItemSource<MockItemClass> {
-  final items;
+  final List<MockItemClass> items;
 
   const MockSourceBlocClassItems(this.items);
 

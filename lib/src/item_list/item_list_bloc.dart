@@ -4,19 +4,21 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import 'package:bloc_filter_search_list/bloc_filter_search_list.dart';
+import '../filter_conditions/filter_conditions_bloc.dart';
+import '../item_source.dart';
+import '../search_query/search_query_bloc.dart';
 import '../utils.dart';
 
 part 'item_list_state.dart';
 
-enum ItemListEvent {
-  FilterConditionsUpdated,
-  SearchQueryUpdated,
-  SourceUpdated
+enum _itemListEvent {
+  filterConditionsUpdated,
+  searchQueryUpdated,
+  sourceUpdated
 }
 
 class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
-    extends Bloc<ItemListEvent, ItemListState> {
+    extends Bloc<_itemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
   final SearchQueryBloc _searchQueryBloc;
   final Bloc _sourceBloc;
@@ -39,15 +41,15 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties {
     _filterConditionsSubscription = _filterConditionsBloc.listen((_) {
-      add(ItemListEvent.FilterConditionsUpdated);
+      add(_itemListEvent.filterConditionsUpdated);
     });
 
     _searchQuerySubscription = _searchQueryBloc.listen((_) {
-      add(ItemListEvent.SearchQueryUpdated);
+      add(_itemListEvent.searchQueryUpdated);
     });
 
     _sourceSubscription = _sourceBloc.listen((_) {
-      add(ItemListEvent.SourceUpdated);
+      add(_itemListEvent.sourceUpdated);
     });
   }
 
@@ -56,7 +58,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
 
   @override
   Stream<ItemListState> mapEventToState(
-    ItemListEvent event,
+    _itemListEvent event,
   ) async* {
     if (_filterConditionsBloc.state is! ConditionsInitialized ||
         _sourceBloc.state is! T) {
@@ -64,9 +66,9 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
       return;
     }
 
-    if (event != ItemListEvent.SourceUpdated &&
-        event != ItemListEvent.FilterConditionsUpdated &&
-        event != ItemListEvent.SearchQueryUpdated) {
+    if (event != _itemListEvent.sourceUpdated &&
+        event != _itemListEvent.filterConditionsUpdated &&
+        event != _itemListEvent.searchQueryUpdated) {
       return;
     }
 

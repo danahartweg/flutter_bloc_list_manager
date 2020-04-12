@@ -30,10 +30,10 @@ class FilterConditionsBloc<T extends ItemSource>
       }
 
       final availableConditions = _generateFilterPropertiesMap();
-      final Set<String> availableConditionKeys = Set();
+      final availableConditionKeys = <String>{};
 
-      (sourceState as T).items.forEach((item) {
-        _filterProperties.forEach((property) {
+      for (final item in sourceState.items) {
+        for (final property in _filterProperties) {
           final value = item[property];
 
           if (value is String && value.isNotEmpty) {
@@ -42,20 +42,20 @@ class FilterConditionsBloc<T extends ItemSource>
             availableConditions[property].add(value);
             availableConditionKeys.add(conditionKey);
           }
-        });
-      });
+        }
+      }
 
       final currentState = state;
-      final Set<String> activeConditions = currentState is ConditionsInitialized
+      final activeConditions = currentState is ConditionsInitialized
           ? currentState.activeConditions
-          : Set();
+          : <String>{};
 
-      _filterProperties.forEach((property) {
-        // ensure only unique entries are present and that the entries are sorted...
+      for (final property in _filterProperties) {
+        // ensure only unique entries are present and that entries are sorted...
         // removing duplicates before sorting will save a few cycles
         availableConditions[property] =
             availableConditions[property].toSet().toList()..sort();
-      });
+      }
 
       add(RefreshConditions(
         activeConditions: activeConditions.intersection(availableConditionKeys),
@@ -97,8 +97,7 @@ class FilterConditionsBloc<T extends ItemSource>
       return currentState;
     }
 
-    final Set<String> activeConditions =
-        Set.from(currentState.activeConditions);
+    final activeConditions = Set<String>.from(currentState.activeConditions);
     activeConditions.add(conditionKey);
 
     return ConditionsInitialized(
@@ -121,8 +120,7 @@ class FilterConditionsBloc<T extends ItemSource>
       return currentState;
     }
 
-    final Set<String> activeConditions =
-        Set.from(currentState.activeConditions);
+    final activeConditions = Set<String>.from(currentState.activeConditions);
     activeConditions.remove(conditionKey);
 
     return ConditionsInitialized(

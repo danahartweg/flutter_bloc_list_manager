@@ -82,7 +82,7 @@ void main() {
       'requires a source bloc state with items',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set(),
+          activeConditions: <String>{},
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('');
@@ -100,7 +100,7 @@ void main() {
       'returns all source items with no active filter conditions',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set(),
+          activeConditions: <String>{},
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('');
@@ -124,9 +124,9 @@ void main() {
       'sets filter empty state with no source items matching active conditions',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set.from([
+          activeConditions: <String>{
             generateConditionKey('id', '123'),
-          ]),
+          },
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('');
@@ -148,10 +148,10 @@ void main() {
       'returns source items matching a single active condition key',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set.from([
+          activeConditions: <String>{
             generateConditionKey('id', _mockItem1.id),
             generateConditionKey('id', _mockItem3.id),
-          ]),
+          },
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('');
@@ -175,10 +175,10 @@ void main() {
       'returns source items matching multiple active condition keys',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set.from([
+          activeConditions: <String>{
             generateConditionKey('id', _mockItem1.id),
             generateConditionKey('extra', _mockItem3.extra),
-          ]),
+          },
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('');
@@ -202,7 +202,7 @@ void main() {
       'returns source items matching only a query',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set(),
+          activeConditions: <String>{},
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('value2');
@@ -227,11 +227,11 @@ void main() {
       'returns source items matching a query after filtering',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set.from([
+          activeConditions: <String>{
             generateConditionKey('id', _mockItem1.id),
             generateConditionKey('id', _mockItem2.id),
             generateConditionKey('id', _mockItem3.id),
-          ]),
+          },
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('value2');
@@ -256,11 +256,11 @@ void main() {
       'sets filter empty state with no source items matching query',
       build: () async {
         when(_filterConditionsBloc.state).thenReturn(ConditionsInitialized(
-          activeConditions: Set.from([
+          activeConditions: <String>{
             generateConditionKey('id', _mockItem1.id),
             generateConditionKey('id', _mockItem2.id),
             generateConditionKey('id', _mockItem3.id),
-          ]),
+          },
           availableConditions: {},
         ));
         when(_searchQueryBloc.state).thenReturn('123');
