@@ -5,13 +5,104 @@ import 'package:meta/meta.dart';
 
 import '../bloc_filter_search_list.dart';
 
+/// {@template blocfiltersearchlist}
+/// Intended to be the main entry point and the only widget one should
+/// ever construct when using this package. UI needing to consume
+/// the child blocs should do so via traditional [BlocBuilder] implementations.
+///
+/// ```dart
+/// class ListWidget extends StatelessWidget {
+///   @override
+///   build(context) {
+///     return Scaffold(
+///       appBar: AppBar(
+///         title: Text('List Widget'),
+///       ),
+///       body: BlocProvider<YourItemSourceBloc>(
+///         create: (_) => YourItemSourceBloc(),
+///         child: BlocFilterSearchList<
+///             YourItemClass,
+///             YourSourceBlocStateWithItems,
+///             YourItemSourceBloc>(
+///           filterProperties: ['property1'],
+///           searchProperties: ['property2'],
+///           child: Column(
+///             children: [
+///               BlocBuilder<SearchQueryBloc, String>(
+///                 builder: (context, state) {
+///                   return Flexible(
+///                     child: TextField(
+///                       decoration: const InputDecoration(
+///                         icon: Icon(Icons.search),
+///                         labelText: 'Search',
+///                       ),
+///                       textInputAction: TextInputAction.search,
+///                       onChanged: (value) => context
+///                           .bloc<SearchQueryBloc>()
+///                           .add(SetSearchQuery(value)),
+///                     ),
+///                   );
+///                 },
+///               ),
+///               SizedBox(height: 10.0),
+///               Expanded(
+///                 child: BlocBuilder<ItemListBloc, ItemListState>(
+///                   builder: (_, state) {
+///                     if (state is NoSourceItems) {
+///                       return Text('No source items');
+///                     }
+
+///                     if (state is ItemEmptyState) {
+///                       return Text('No matching results');
+///                     }
+
+///                     if (state is ItemResults<YourItemClass>) {
+///                       return ListView(
+///                         children: state.items
+///                             .map(
+///                               (item) => ListTile(
+///                                 key: ValueKey(item.id),
+///                                 title: Text(
+///                                   '$item.property1, $item.property2',
+///                                 ),
+///                               ),
+///                             )
+///                             .toList(),
+///                       );
+///                     }
+
+///                     return Container();
+///                   },
+///                 ),
+///               ),
+///             ],
+///           ),
+///         ),
+///       ),
+///     );
+///   }
+/// }
+/// ```
+/// {@endtemplate}
 class BlocFilterSearchList<I extends ItemClassWithAccessor,
     T extends ItemSourceState, B extends Bloc> extends StatelessWidget {
+  /// The widget to be rendered. The build context will have access to all
+  /// of the blocs created by this widget to manage your list.
   final Widget child;
+
+  /// A [List] of property keys that should be used
+  /// by the [FilterConditionsBloc] when generating available conditions.
   final List<String> filterProperties;
+
+  /// A [List] of property keys that should be used
+  /// by the [ItemListBloc] while searching against the active query.
   final List<String> searchProperties;
+
+  /// [Bloc] that will contain an [ItemSourceState]. If one is not provided
+  /// the current [BuildContext] will be used to look it up.
   final B sourceBloc;
 
+  /// {@macro blocfiltersearchlist}
   BlocFilterSearchList({
     @required this.child,
     @required this.filterProperties,
