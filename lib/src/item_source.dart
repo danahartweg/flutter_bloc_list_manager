@@ -5,11 +5,11 @@
 /// This item class will generally also extend equatable.
 ///
 /// ```dart
-/// class MockItemClass extends Equatable implements ItemClassWithPropGetter {
+/// class kItemClass extends Equatable implements ItemClassWithAccessor {
 ///   final String id;
 ///   final String name;
 
-///   const MockItemClass({
+///   const kItemClass({
 ///     this.id,
 ///     this.name,
 ///   });
@@ -24,7 +24,7 @@
 ///         break;
 ///       default:
 ///         throw ArgumentError(
-///           'Property `$prop` does not exist on PlantVarietyIndex.',
+///           'Property `$prop` does not exist on ItemClass.',
 ///         );
 ///     }
 ///   }
