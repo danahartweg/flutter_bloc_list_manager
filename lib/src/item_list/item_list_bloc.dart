@@ -17,6 +17,20 @@ enum _itemListEvent {
   sourceUpdated
 }
 
+/// {@template itemlistbloc}
+/// Attaches to the provided [_filterConditionsBloc], [_searchQueryBloc],
+/// and [_sourceBloc] and uses supplied [_searchProperties]
+/// in order to generate a list of items that should be rendered to the UI.
+///
+/// The active conditions from the supplied [_filterConditionsBloc]
+/// are additive, so items matching *any* of the active conditions will be
+/// returned. Once the source items have been filtered, the search query
+/// will be applied to any remaining items to generate the final list state.
+///
+/// There should be no need to ever manually construct an [ItemListBloc].
+/// It should, instead, be retrieved from within the `BlocFilterSearchList`
+/// in order to render your list UI however you see fit.
+/// {@endtemplate}
 class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
     extends Bloc<_itemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
@@ -28,6 +42,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
   StreamSubscription _searchQuerySubscription;
   StreamSubscription _sourceSubscription;
 
+  /// {@macro itemlistbloc}
   ItemListBloc({
     @required FilterConditionsBloc filterConditionsBloc,
     @required SearchQueryBloc searchQueryBloc,
@@ -54,7 +69,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
   }
 
   @override
-  ItemListState get initialState => EmptySource();
+  ItemListState get initialState => NoSourceItems();
 
   @override
   Stream<ItemListState> mapEventToState(
@@ -62,7 +77,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
   ) async* {
     if (_filterConditionsBloc.state is! ConditionsInitialized ||
         _sourceBloc.state is! T) {
-      yield EmptySource();
+      yield NoSourceItems();
       return;
     }
 
@@ -77,9 +92,9 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
     final searchResults = _searchSource(_searchQueryBloc.state, filterResults);
 
     if (searchResults.isEmpty) {
-      yield NoResults();
+      yield ItemEmptyState();
     } else {
-      yield ItemListResults(searchResults.toList());
+      yield ItemResults(searchResults.toList());
     }
   }
 
@@ -91,6 +106,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
       return items;
     }
 
+    // If any active condition matches we can immediately return that item.
     return items.where((item) => activeConditions.any((conditionKey) {
           final conditionKeyValue = splitConditionKey(conditionKey);
           return item[conditionKeyValue[0]] == conditionKeyValue[1];
@@ -102,6 +118,8 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
       return items;
     }
 
+    // Search queries are stored lowercase, so we want to match
+    // against a lowercase value as well.
     return items.where((item) => _searchProperties.any((property) {
           final value = item[property];
           return value is String

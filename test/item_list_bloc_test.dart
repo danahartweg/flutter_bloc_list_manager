@@ -44,7 +44,7 @@ void main() {
       _searchQueryBloc = MockSearchQueryBloc();
       _sourceBloc = MockSourceBloc();
 
-      // ensure bloc listeners can be attached
+      // Ensure bloc listeners can be attached.
       whenListen(_filterConditionsBloc, Stream.value(null));
       whenListen(_searchQueryBloc, Stream.value(null));
       whenListen(_sourceBloc, Stream.value(null));
@@ -60,7 +60,7 @@ void main() {
         );
       },
       skip: 0,
-      expect: [EmptySource()],
+      expect: [NoSourceItems()],
     );
 
     blocTest(
@@ -116,7 +116,7 @@ void main() {
         );
       },
       expect: [
-        ItemListResults([_mockItem1])
+        ItemResults([_mockItem1])
       ],
     );
 
@@ -141,7 +141,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [NoResults()],
+      expect: [ItemEmptyState()],
     );
 
     blocTest(
@@ -167,7 +167,7 @@ void main() {
         );
       },
       expect: [
-        ItemListResults([_mockItem1, _mockItem3])
+        ItemResults([_mockItem1, _mockItem3])
       ],
     );
 
@@ -194,7 +194,7 @@ void main() {
         );
       },
       expect: [
-        ItemListResults([_mockItem1, _mockItem3])
+        ItemResults([_mockItem1, _mockItem3])
       ],
     );
 
@@ -219,7 +219,7 @@ void main() {
         );
       },
       expect: [
-        ItemListResults([_mockItem2])
+        ItemResults([_mockItem2])
       ],
     );
 
@@ -248,7 +248,7 @@ void main() {
         );
       },
       expect: [
-        ItemListResults([_mockItem2])
+        ItemResults([_mockItem2])
       ],
     );
 
@@ -276,7 +276,7 @@ void main() {
           searchProperties: ['extra'],
         );
       },
-      expect: [NoResults()],
+      expect: [ItemEmptyState()],
     );
   });
 }
