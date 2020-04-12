@@ -4,8 +4,8 @@ import 'package:equatable/equatable.dart';
 
 import 'package:bloc_filter_search_list/bloc_filter_search_list.dart';
 
-class MockSourceBloc extends MockBloc<ItemSource, MockSourceBlocState>
-    implements Bloc<ItemSource, MockSourceBlocState> {}
+class MockSourceBloc extends MockBloc<ItemSourceState, MockSourceBlocState>
+    implements Bloc<ItemSourceState, MockSourceBlocState> {}
 
 abstract class MockSourceBlocState extends Equatable {
   const MockSourceBlocState();
@@ -18,7 +18,7 @@ class MockSourceBlocNoItems extends MockSourceBlocState {
   List<Object> get props => ['No Items'];
 }
 
-class MockItemClass extends Equatable implements ItemClassWithPropGetter {
+class MockItemClass extends Equatable implements ItemClassWithAccessor {
   final String id;
   final String name;
   final String extra;
@@ -57,7 +57,7 @@ class MockItemClass extends Equatable implements ItemClassWithPropGetter {
 }
 
 class MockSourceBlocClassItems extends MockSourceBlocState
-    implements ItemSource<MockItemClass> {
+    implements ItemSourceState<MockItemClass> {
   final List<MockItemClass> items;
 
   const MockSourceBlocClassItems(this.items);

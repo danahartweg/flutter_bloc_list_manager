@@ -22,7 +22,7 @@ part 'filter_conditions_state.dart';
 /// It should, instead, be retrieved from within the `BlocFilterSearchList`
 /// in order to construct whatever filtering UI you desire.
 /// {@endtemplate}
-class FilterConditionsBloc<T extends ItemSource>
+class FilterConditionsBloc<T extends ItemSourceState>
     extends Bloc<FilterConditionsEvent, FilterConditionsState> {
   final List<String> _filterProperties;
   final Bloc _sourceBloc;

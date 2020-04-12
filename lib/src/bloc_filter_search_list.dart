@@ -5,8 +5,8 @@ import 'package:meta/meta.dart';
 
 import '../bloc_filter_search_list.dart';
 
-class BlocFilterSearchList<I extends ItemClassWithPropGetter,
-    T extends ItemSource, B extends Bloc> extends StatelessWidget {
+class BlocFilterSearchList<I extends ItemClassWithAccessor,
+    T extends ItemSourceState, B extends Bloc> extends StatelessWidget {
   final Widget child;
   final List<String> filterProperties;
   final List<String> searchProperties;

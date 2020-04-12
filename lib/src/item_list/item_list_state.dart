@@ -41,7 +41,7 @@ class ItemEmptyState extends ItemListState {
 ///
 /// The items should be the source of truth to render in your list UI.
 /// {@endtemplate}
-class ItemResults<I extends ItemClassWithPropGetter> extends ItemListState {
+class ItemResults<I extends ItemClassWithAccessor> extends ItemListState {
   /// Items that have made it past filtering and searching.
   final List<I> items;
 

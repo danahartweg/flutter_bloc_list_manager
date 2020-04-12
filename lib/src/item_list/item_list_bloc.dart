@@ -31,7 +31,7 @@ enum _itemListEvent {
 /// It should, instead, be retrieved from within the `BlocFilterSearchList`
 /// in order to render your list UI however you see fit.
 /// {@endtemplate}
-class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
+class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
     extends Bloc<_itemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
   final SearchQueryBloc _searchQueryBloc;
