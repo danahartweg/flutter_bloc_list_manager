@@ -11,7 +11,7 @@ import '../bloc_filter_search_list.dart';
 /// the child blocs should do so via traditional [BlocBuilder] implementations.
 ///
 /// ```dart
-/// class ListWidget extends StatelessWidget {
+/// class YourListWidget extends StatelessWidget {
 ///   @override
 ///   build(context) {
 ///     return Scaffold(
@@ -28,52 +28,20 @@ import '../bloc_filter_search_list.dart';
 ///           searchProperties: ['property2'],
 ///           child: Column(
 ///             children: [
-///               BlocBuilder<SearchQueryBloc, String>(
+///               BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
 ///                 builder: (context, state) {
-///                   return Flexible(
-///                     child: TextField(
-///                       decoration: const InputDecoration(
-///                         icon: Icon(Icons.search),
-///                         labelText: 'Search',
-///                       ),
-///                       textInputAction: TextInputAction.search,
-///                       onChanged: (value) => context
-///                           .bloc<SearchQueryBloc>()
-///                           .add(SetSearchQuery(value)),
-///                     ),
-///                   );
+///                   return Text('Render your filter conditions UI.');
 ///                 },
 ///               ),
-///               SizedBox(height: 10.0),
-///               Expanded(
-///                 child: BlocBuilder<ItemListBloc, ItemListState>(
-///                   builder: (_, state) {
-///                     if (state is NoSourceItems) {
-///                       return Text('No source items');
-///                     }
-
-///                     if (state is ItemEmptyState) {
-///                       return Text('No matching results');
-///                     }
-
-///                     if (state is ItemResults<YourItemClass>) {
-///                       return ListView(
-///                         children: state.items
-///                             .map(
-///                               (item) => ListTile(
-///                                 key: ValueKey(item.id),
-///                                 title: Text(
-///                                   '$item.property1, $item.property2',
-///                                 ),
-///                               ),
-///                             )
-///                             .toList(),
-///                       );
-///                     }
-
-///                     return Container();
-///                   },
-///                 ),
+///               BlocBuilder<SearchQueryBloc, String>(
+///                 builder: (context, state) {
+///                   return Text('Render your Search UI.');
+///                 },
+///               ),
+///               BlocBuilder<ItemListBloc, ItemListState>(
+///                 builder: (context, state) {
+///                   return Text('Render your list UI.');
+///                 },
 ///               ),
 ///             ],
 ///           ),

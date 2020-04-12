@@ -1,7 +1,7 @@
 part of 'search_query_bloc.dart';
 
 /// {@template searchqueryevent}
-/// Base [FilterConditionsEvent] for extension.
+/// Base [SearchQueryEvent] for extension.
 /// {@endtemplate}
 abstract class SearchQueryEvent extends Equatable {
   /// {@macro searchqueryevent}
