@@ -18,7 +18,7 @@ class NoResults extends ItemListState {
   List<Object> get props => ['No Results'];
 }
 
-class ItemListResults<I> extends ItemListState {
+class ItemListResults<I extends ItemClassWithPropGetter> extends ItemListState {
   final List<I> items;
 
   const ItemListResults(this.items);

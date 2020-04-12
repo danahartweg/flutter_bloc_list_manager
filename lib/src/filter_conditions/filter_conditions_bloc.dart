@@ -10,16 +10,16 @@ import '../utils.dart';
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
 
-class FilterConditionsBloc<T extends ItemSource, S>
+class FilterConditionsBloc<T extends ItemSource>
     extends Bloc<FilterConditionsEvent, FilterConditionsState> {
   final List<String> _filterProperties;
-  final Bloc<dynamic, S> _sourceBloc;
+  final Bloc _sourceBloc;
 
   StreamSubscription _sourceSubscription;
 
   FilterConditionsBloc({
     @required List<String> filterProperties,
-    @required Bloc<dynamic, S> sourceBloc,
+    @required Bloc sourceBloc,
   })  : assert(filterProperties != null),
         assert(sourceBloc != null),
         _filterProperties = filterProperties,

@@ -53,8 +53,7 @@ void main() {
     blocTest(
       'sets an initial state',
       build: () async {
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -70,8 +69,7 @@ void main() {
         when(_sourceBloc.state)
             .thenReturn(MockSourceBlocClassItems([_mockItem1]));
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -89,8 +87,7 @@ void main() {
         ));
         when(_searchQueryBloc.state).thenReturn('');
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -112,8 +109,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -139,8 +135,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -165,8 +160,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -193,8 +187,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -218,8 +211,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -248,8 +240,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,
@@ -278,8 +269,7 @@ void main() {
           MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
         );
 
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems,
-            MockSourceBlocState>(
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
           searchQueryBloc: _searchQueryBloc,
           sourceBloc: _sourceBloc,

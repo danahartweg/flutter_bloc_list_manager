@@ -5,15 +5,12 @@ import 'package:meta/meta.dart';
 
 import '../bloc_filter_search_list.dart';
 
-class BlocFilterSearchList<
-    I extends ItemClassWithPropGetter,
-    T extends ItemSource,
-    S,
-    B extends Bloc<dynamic, S>> extends StatelessWidget {
+class BlocFilterSearchList<I extends ItemClassWithPropGetter,
+    T extends ItemSource, B extends Bloc> extends StatelessWidget {
   final Widget child;
   final List<String> filterProperties;
   final List<String> searchProperties;
-  final Bloc<dynamic, S> sourceBloc;
+  final B sourceBloc;
 
   BlocFilterSearchList({
     @required this.child,
@@ -30,7 +27,7 @@ class BlocFilterSearchList<
     return MultiBlocProvider(
       providers: [
         BlocProvider<FilterConditionsBloc>(
-          create: (context) => FilterConditionsBloc<T, S>(
+          create: (context) => FilterConditionsBloc<T>(
             sourceBloc: _sourceBloc,
             filterProperties: filterProperties,
           ),
@@ -39,7 +36,7 @@ class BlocFilterSearchList<
           create: (context) => SearchQueryBloc(),
         ),
         BlocProvider<ItemListBloc>(
-          create: (context) => ItemListBloc<I, T, S>(
+          create: (context) => ItemListBloc<I, T>(
             sourceBloc: _sourceBloc,
             filterConditionsBloc: context.bloc<FilterConditionsBloc>(),
             searchQueryBloc: context.bloc<SearchQueryBloc>(),

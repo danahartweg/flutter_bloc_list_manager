@@ -15,11 +15,11 @@ enum ItemListEvent {
   SourceUpdated
 }
 
-class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource, S>
+class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource>
     extends Bloc<ItemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
   final SearchQueryBloc _searchQueryBloc;
-  final Bloc<dynamic, S> _sourceBloc;
+  final Bloc _sourceBloc;
   final List<String> _searchProperties;
 
   StreamSubscription _filterConditionsSubscription;
@@ -29,7 +29,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource, S>
   ItemListBloc({
     @required FilterConditionsBloc filterConditionsBloc,
     @required SearchQueryBloc searchQueryBloc,
-    @required Bloc<dynamic, S> sourceBloc,
+    @required Bloc sourceBloc,
     List<String> searchProperties,
   })  : assert(filterConditionsBloc != null),
         assert(searchQueryBloc != null),
@@ -77,7 +77,7 @@ class ItemListBloc<I extends ItemClassWithPropGetter, T extends ItemSource, S>
     if (searchResults.isEmpty) {
       yield NoResults();
     } else {
-      yield ItemListResults<I>(searchResults.toList());
+      yield ItemListResults(searchResults.toList());
     }
   }
 

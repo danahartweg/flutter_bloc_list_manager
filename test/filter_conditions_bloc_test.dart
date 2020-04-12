@@ -65,8 +65,7 @@ void main() {
         build: () async {
           whenListen(_sourceBloc, Stream.value(MockSourceBlocNoItems()));
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: [],
           );
@@ -82,8 +81,7 @@ void main() {
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: [],
           );
@@ -104,8 +102,7 @@ void main() {
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['id', 'extra'],
           );
@@ -136,8 +133,7 @@ void main() {
             ])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['name', 'extra', 'conditional'],
           );
@@ -163,8 +159,7 @@ void main() {
                 MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['id', 'extra'],
           );
@@ -191,8 +186,7 @@ void main() {
             ]),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['id', 'extra'],
           );
@@ -217,8 +211,7 @@ void main() {
 
       blocTest(
         'retains remaining valid active conditions when the source list updates',
-        build: () async =>
-            FilterConditionsBloc<MockSourceBlocClassItems, MockSourceBlocState>(
+        build: () async => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
           filterProperties: ['id', 'extra'],
         ),
@@ -281,8 +274,7 @@ void main() {
                 MockSourceBlocClassItems([_mockItem1, _mockItem1, _mockItem2])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['id', 'extra'],
           );
@@ -307,8 +299,7 @@ void main() {
                 MockSourceBlocClassItems([_mockItem3, _mockItem2, _mockItem1])),
           );
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: ['id', 'extra'],
           );
@@ -329,8 +320,7 @@ void main() {
       blocTest(
         'does not add an active condition when uninitialized',
         build: () async {
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: [],
           );
@@ -345,8 +335,7 @@ void main() {
         build: () async {
           whenListen(_sourceBloc, Stream.value(MockSourceBlocClassItems([])));
 
-          return FilterConditionsBloc<MockSourceBlocClassItems,
-              MockSourceBlocState>(
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
             filterProperties: [],
           );
