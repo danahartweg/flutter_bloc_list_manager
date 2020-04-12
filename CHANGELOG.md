@@ -1,3 +1,9 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0]
 
-* TODO: Describe initial release.
+Initial package implementation and testing.
+
++ Introduced `ListManager`
++ Introduced `FilterConditionsBloc`
++ Introduced `SearchQueryBloc`
++ Introduced `ItemListBloc`
++ Added `ItemClassWithAccessor` and `ItemSourceState` to manage state
