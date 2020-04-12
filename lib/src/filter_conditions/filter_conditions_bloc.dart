@@ -19,7 +19,7 @@ part 'filter_conditions_state.dart';
 /// from the state.
 ///
 /// There should be no need to ever manually construct a [FilterConditionsBloc].
-/// It should, instead, be retrieved from within the `BlocFilterSearchList`
+/// It should, instead, be retrieved from within the `ListManager`
 /// in order to construct whatever filtering UI you desire.
 /// {@endtemplate}
 class FilterConditionsBloc<T extends ItemSourceState>

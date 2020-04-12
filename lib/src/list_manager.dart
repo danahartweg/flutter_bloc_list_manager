@@ -3,9 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
-import '../bloc_filter_search_list.dart';
+import '../flutter_bloc_list_manager.dart';
 
-/// {@template blocfiltersearchlist}
+/// {@template listmanager}
 /// Intended to be the main entry point and the only widget one should
 /// ever construct when using this package. UI needing to consume
 /// the child blocs should do so via traditional [BlocBuilder] implementations.
@@ -20,7 +20,7 @@ import '../bloc_filter_search_list.dart';
 ///       ),
 ///       body: BlocProvider<YourItemSourceBloc>(
 ///         create: (_) => YourItemSourceBloc(),
-///         child: BlocFilterSearchList<
+///         child: ListManager<
 ///             YourItemClass,
 ///             YourSourceBlocStateWithItems,
 ///             YourItemSourceBloc>(
@@ -52,8 +52,8 @@ import '../bloc_filter_search_list.dart';
 /// }
 /// ```
 /// {@endtemplate}
-class BlocFilterSearchList<I extends ItemClassWithAccessor,
-    T extends ItemSourceState, B extends Bloc> extends StatelessWidget {
+class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
+    B extends Bloc> extends StatelessWidget {
   /// The widget to be rendered. The build context will have access to all
   /// of the blocs created by this widget to manage your list.
   final Widget child;
@@ -70,8 +70,8 @@ class BlocFilterSearchList<I extends ItemClassWithAccessor,
   /// the current [BuildContext] will be used to look it up.
   final B sourceBloc;
 
-  /// {@macro blocfiltersearchlist}
-  BlocFilterSearchList({
+  /// {@macro listmanager}
+  ListManager({
     @required this.child,
     @required this.filterProperties,
     this.searchProperties,

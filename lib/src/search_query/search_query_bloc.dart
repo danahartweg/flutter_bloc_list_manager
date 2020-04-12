@@ -9,7 +9,7 @@ part 'search_query_event.dart';
 /// search query.
 ///
 /// There should be no need to ever manually construct a [SearchQueryBloc].
-/// It should, instead, be retrieved from within the `BlocFilterSearchList`
+/// It should, instead, be retrieved from within the `ListManager`
 /// in order to dispatch events to add or clear the search query.
 class SearchQueryBloc extends Bloc<SearchQueryEvent, String> {
   @override

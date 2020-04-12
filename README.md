@@ -1,4 +1,4 @@
-# bloc_filter_search_list
+# flutter_bloc_list_manager
 
 A new Flutter package project.
 

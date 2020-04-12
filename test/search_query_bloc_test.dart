@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:bloc_filter_search_list/bloc_filter_search_list.dart';
+import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 
 void main() {
   group('SearchQueryBloc', () {

@@ -28,7 +28,7 @@ enum _itemListEvent {
 /// will be applied to any remaining items to generate the final list state.
 ///
 /// There should be no need to ever manually construct an [ItemListBloc].
-/// It should, instead, be retrieved from within the `BlocFilterSearchList`
+/// It should, instead, be retrieved from within the `ListManager`
 /// in order to render your list UI however you see fit.
 /// {@endtemplate}
 class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
