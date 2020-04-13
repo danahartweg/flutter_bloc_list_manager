@@ -1,3 +1,7 @@
+## [0.1.1]
+
+Documentation updates.
+
 ## [0.1.0]
 
 Initial package implementation and testing.

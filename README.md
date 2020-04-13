@@ -1,6 +1,6 @@
 # Flutter Bloc List Manager
 
-[![Pub](https://img.shields.io/pub/v/flutter_bloc.svg)](https://pub.dev/packages/flutter_bloc_list_manager)
+[![Pub](https://img.shields.io/pub/v/flutter_bloc_list_manager.svg)](https://pub.dev/packages/flutter_bloc_list_manager)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
@@ -189,6 +189,13 @@ class SourceLoaded extends SourceBlocState implements ItemSourceState<ItemClass>
   List<Object> get props => [items];
 }
 ```
+
+## Upcoming improvements
+
++ Pluggable search callback (allowing integration of fuzzy search)
++ Conditional instantiation of the `SearchQueryBloc`
++ Integrating opinionated pre-composed UI widgets
++ Potentially moving away from the source bloc concept and requiring a repository instead
 
 ## Examples
 
