@@ -189,3 +189,7 @@ class SourceLoaded extends SourceBlocState implements ItemSourceState<ItemClass>
   List<Object> get props => [items];
 }
 ```
+
+## Examples
+
+[Basic UI implementing all of the above blocs](./example/lib/main.dart)
