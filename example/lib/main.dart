@@ -84,8 +84,7 @@ class Loaded extends JournalEntryState
 enum _journalEntryEvent { load }
 
 class JournalEntryBloc extends Bloc<_journalEntryEvent, JournalEntryState> {
-  @override
-  JournalEntryState get initialState => Loading();
+  JournalEntryBloc() : super(Loading());
 
   @override
   Stream<JournalEntryState> mapEventToState(

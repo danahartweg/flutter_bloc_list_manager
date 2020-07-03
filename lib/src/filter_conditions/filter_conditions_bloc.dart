@@ -36,7 +36,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
   })  : assert(filterProperties != null),
         assert(sourceBloc != null),
         _filterProperties = filterProperties,
-        _sourceBloc = sourceBloc {
+        _sourceBloc = sourceBloc,
+        super(ConditionsUninitialized()) {
     _sourceSubscription = _sourceBloc.listen((sourceState) {
       if (sourceState is! T) {
         return;
@@ -76,9 +77,6 @@ class FilterConditionsBloc<T extends ItemSourceState>
       ));
     });
   }
-
-  @override
-  FilterConditionsState get initialState => ConditionsUninitialized();
 
   @override
   Stream<FilterConditionsState> mapEventToState(

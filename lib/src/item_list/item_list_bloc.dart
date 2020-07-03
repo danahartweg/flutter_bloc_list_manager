@@ -54,7 +54,8 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
         _filterConditionsBloc = filterConditionsBloc,
         _searchQueryBloc = searchQueryBloc,
         _sourceBloc = sourceBloc,
-        _searchProperties = searchProperties {
+        _searchProperties = searchProperties,
+        super(NoSourceItems()) {
     _filterConditionsSubscription = _filterConditionsBloc.listen((_) {
       add(_itemListEvent.filterConditionsUpdated);
     });
@@ -67,9 +68,6 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
       add(_itemListEvent.sourceUpdated);
     });
   }
-
-  @override
-  ItemListState get initialState => NoSourceItems();
 
   @override
   Stream<ItemListState> mapEventToState(
