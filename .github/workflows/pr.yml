@@ -21,3 +21,5 @@ jobs:
         run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
       - name: Code coverage
         uses: ChicagoFlutter/lcov-cop@v1.0.2
+        with:
+          min_coverage: 75
