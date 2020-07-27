@@ -1,3 +1,9 @@
+## [0.1.4]
+
+Adds boolean value support for automatic filter condition generation as well as while filtering the source list.
+
+Closes https://github.com/danahartweg/flutter_bloc_list_manager/issues/8
+
 ## [0.1.3]
 
 + Bumped `bloc` to `^5.0.0`

@@ -20,7 +20,7 @@ void main() {
     id: 'idValue2',
     name: 'nameValue2',
     extra: 'extraValue2',
-    conditional: true,
+    conditional: false,
   );
   const _mockItem3 = MockItemClass(
     id: 'idValue3',
@@ -128,14 +128,13 @@ void main() {
                 id: 'idValue',
                 name: '',
                 extra: null,
-                conditional: true,
               ),
             ])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
-            filterProperties: ['name', 'extra', 'conditional'],
+            filterProperties: ['name', 'extra'],
           );
         },
         expect: [
@@ -144,7 +143,6 @@ void main() {
             availableConditions: {
               'name': [],
               'extra': [],
-              'conditional': [],
             },
           )
         ],
@@ -314,6 +312,59 @@ void main() {
           )
         ],
       );
+
+      blocTest(
+        'formats boolean property values for display without repeating',
+        build: () async {
+          whenListen(
+            _sourceBloc,
+            Stream.value(
+                MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
+          );
+
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
+            sourceBloc: _sourceBloc,
+            filterProperties: ['conditional'],
+          );
+        },
+        expect: [
+          ConditionsInitialized(
+            activeConditions: <String>{},
+            availableConditions: {
+              'conditional': [
+                'True',
+                'False',
+              ],
+            },
+          )
+        ],
+      );
+
+      blocTest(
+        'filtering one item on a boolean property should still add both items',
+        build: () async {
+          whenListen(
+            _sourceBloc,
+            Stream.value(MockSourceBlocClassItems([_mockItem1])),
+          );
+
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
+            sourceBloc: _sourceBloc,
+            filterProperties: ['conditional'],
+          );
+        },
+        expect: [
+          ConditionsInitialized(
+            activeConditions: <String>{},
+            availableConditions: {
+              'conditional': [
+                'True',
+                'False',
+              ],
+            },
+          )
+        ],
+      );
     });
 
     group('active conditions', () {
@@ -344,9 +395,13 @@ void main() {
           bloc
             ..add(AddCondition(property: 'id', value: '123'))
             ..add(AddCondition(property: 'extra', value: 'something'))
+            ..add(AddCondition(property: 'conditional', value: 'True'))
             ..add(AddCondition(property: 'id', value: '456'))
+            ..add(AddCondition(property: 'conditional', value: 'False'))
             ..add(RemoveCondition(property: 'id', value: '123'))
+            ..add(RemoveCondition(property: 'conditional', value: 'False'))
             ..add(RemoveCondition(property: 'id', value: '456'))
+            ..add(RemoveCondition(property: 'conditional', value: 'True'))
             ..add(RemoveCondition(property: 'extra', value: 'something'));
 
           return;
@@ -369,8 +424,37 @@ void main() {
           ConditionsInitialized(
             activeConditions: <String>{
               generateConditionKey('id', '123'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '123'),
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '123'),
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+              generateConditionKey('conditional', 'False'),
+            },
+            availableConditions: {},
+          ),
+          // Conditions start to be removed.
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+              generateConditionKey('conditional', 'False'),
             },
             availableConditions: {},
           ),
@@ -378,6 +462,14 @@ void main() {
             activeConditions: <String>{
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
             },
             availableConditions: {},
           ),

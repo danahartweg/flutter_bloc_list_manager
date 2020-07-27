@@ -43,12 +43,25 @@ class FilterConditionsBloc<T extends ItemSourceState>
         return;
       }
 
+      final modifiedFilterConditions = Set.from(_filterProperties);
+      final booleanProperties = <String>{};
+
       final availableConditions = _generateFilterPropertiesMap();
       final availableConditionKeys = <String>{};
 
       for (final item in sourceState.items) {
-        for (final property in _filterProperties) {
+        for (final property in modifiedFilterConditions) {
           final value = item[property];
+
+          if (value is bool) {
+            booleanProperties.add(property);
+
+            availableConditions[property].add('True');
+            availableConditions[property].add('False');
+
+            availableConditionKeys.add(generateConditionKey(property, 'True'));
+            availableConditionKeys.add(generateConditionKey(property, 'False'));
+          }
 
           if (value is String && value.isNotEmpty) {
             final conditionKey = generateConditionKey(property, value);
@@ -57,6 +70,13 @@ class FilterConditionsBloc<T extends ItemSourceState>
             availableConditionKeys.add(conditionKey);
           }
         }
+
+        // We don't want to repeatedly loop through boolean properties that
+        // have already been parsed. Nor do we want to sort them (below).
+        if (booleanProperties.isNotEmpty) {
+          modifiedFilterConditions.removeWhere(booleanProperties.contains);
+          booleanProperties.clear();
+        }
       }
 
       final currentState = state;
@@ -64,7 +84,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
           ? currentState.activeConditions
           : <String>{};
 
-      for (final property in _filterProperties) {
+      for (final property in modifiedFilterConditions) {
         // Ensure only unique entries are present and that entries are sorted.
         // Removing duplicates before sorting will save a few cycles.
         availableConditions[property] =

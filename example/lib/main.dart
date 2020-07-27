@@ -18,6 +18,7 @@ class JournalEntry extends Equatable implements ItemClassWithAccessor {
   final String description;
   final String id;
   final String title;
+  final bool isPublished;
 
   const JournalEntry({
     this.author,
@@ -26,11 +27,12 @@ class JournalEntry extends Equatable implements ItemClassWithAccessor {
     this.description,
     this.id,
     this.title,
+    this.isPublished,
   });
 
   // Every prop intended to be used in a filtering or sorting operation
   // should be included in this operator overload.
-  String operator [](String prop) {
+  dynamic operator [](String prop) {
     switch (prop) {
       case 'author':
         return author;
@@ -47,13 +49,17 @@ class JournalEntry extends Equatable implements ItemClassWithAccessor {
       case 'title':
         return title;
         break;
+      case 'isPublished':
+        return isPublished;
+        break;
       default:
         throw ArgumentError('Property `$prop` does not exist on JournalEntry.');
     }
   }
 
   @override
-  List<Object> get props => [author, content, description, id, title];
+  List<Object> get props =>
+      [author, content, description, id, title, isPublished];
 }
 
 // The base state for the source bloc.
@@ -101,6 +107,7 @@ class JournalEntryBloc extends Bloc<_journalEntryEvent, JournalEntryState> {
           description: 'Description 1',
           id: '1',
           title: 'Title 1',
+          isPublished: true,
         ),
         JournalEntry(
           author: 'Author 2',
@@ -109,6 +116,7 @@ class JournalEntryBloc extends Bloc<_journalEntryEvent, JournalEntryState> {
           description: 'Description 2',
           id: '2',
           title: 'Title 2',
+          isPublished: false,
         ),
         JournalEntry(
           author: 'Author 3',
@@ -117,6 +125,7 @@ class JournalEntryBloc extends Bloc<_journalEntryEvent, JournalEntryState> {
           description: 'Description 3',
           id: '3',
           title: 'Title 3',
+          isPublished: true,
         )
       ]);
     }
@@ -136,7 +145,7 @@ void main() {
             title: Text('Flutter Bloc List Manager'),
           ),
           body: ListManager<JournalEntry, Loaded, JournalEntryBloc>(
-            filterProperties: ['author', 'category'],
+            filterProperties: ['author', 'category', 'isPublished'],
             searchProperties: ['content', 'description', 'title'],
             child: Column(
               children: [
@@ -271,6 +280,7 @@ class FilterConditionsSheet extends StatelessWidget {
 const _filterPropertyLabelMap = {
   'author': 'Author',
   'category': 'Category',
+  'isPublished': 'Published',
 };
 
 // Essentially just a pass-through widget to simplify the rendering

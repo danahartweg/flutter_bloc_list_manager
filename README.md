@@ -58,6 +58,10 @@ BlocProvider<SourceBloc>(
 
 State from `FilterConditionsBloc` is used to render your filtering UI. Filter conditions will be updated whenever the source bloc is updated.
 
+String values are treated normally.
+
+Boolean values are treated a little differently. If a boolean value is requested to be used as a `filterCondition`, display-friendly `True` and `False` conditions will automatically be added for you.
+
 _Example_
 ```dart
 BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
@@ -91,6 +95,8 @@ _Example_
 context.bloc<FilterConditionsBloc>().add(AddCondition('property', 'value'));
 context.bloc<FilterConditionsBloc>().add(RemoveCondition('property', 'value'));
 ```
+
+Note: If you want to manually toggle a boolean condition (i.e. not via constructing UI from the `availableConditions`), you would want to use `AddCondition('booleanProperty', 'True')` or `AddCondition('booleanProperty', 'False')` as those are the underlying display values.
 
 ### SearchQueryBloc
 
