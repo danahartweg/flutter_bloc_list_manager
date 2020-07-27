@@ -24,7 +24,7 @@ void main() {
     id: 'idValue2',
     name: 'nameValue2',
     extra: 'extraValue2',
-    conditional: true,
+    conditional: false,
   );
   const _mockItem3 = MockItemClass(
     id: 'idValue3',
@@ -192,6 +192,39 @@ void main() {
     );
 
     blocTest(
+      'returns source items matching a single active boolean condition key',
+      build: () async {
+        whenListen(
+          _filterConditionsBloc,
+          Stream.value(
+            ConditionsInitialized(
+              activeConditions: <String>{
+                generateConditionKey('conditional', 'True'),
+              },
+              availableConditions: {},
+            ),
+          ),
+        );
+        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(
+          _sourceBloc,
+          Stream.value(
+            MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+          ),
+        );
+
+        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
+          filterConditionsBloc: _filterConditionsBloc,
+          searchQueryBloc: _searchQueryBloc,
+          sourceBloc: _sourceBloc,
+        );
+      },
+      expect: [
+        ItemResults([_mockItem1, _mockItem3])
+      ],
+    );
+
+    blocTest(
       'returns source items matching multiple active condition keys',
       build: () async {
         whenListen(
@@ -200,7 +233,7 @@ void main() {
             ConditionsInitialized(
               activeConditions: <String>{
                 generateConditionKey('id', _mockItem1.id),
-                generateConditionKey('extra', _mockItem3.extra),
+                generateConditionKey('conditional', 'True'),
               },
               availableConditions: {},
             ),
