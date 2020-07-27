@@ -128,14 +128,13 @@ void main() {
                 id: 'idValue',
                 name: '',
                 extra: null,
-                conditional: true,
               ),
             ])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
-            filterProperties: ['name', 'extra', 'conditional'],
+            filterProperties: ['name', 'extra'],
           );
         },
         expect: [
@@ -144,7 +143,6 @@ void main() {
             availableConditions: {
               'name': [],
               'extra': [],
-              'conditional': [],
             },
           )
         ],
