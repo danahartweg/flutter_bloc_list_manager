@@ -395,9 +395,13 @@ void main() {
           bloc
             ..add(AddCondition(property: 'id', value: '123'))
             ..add(AddCondition(property: 'extra', value: 'something'))
+            ..add(AddCondition(property: 'conditional', value: 'True'))
             ..add(AddCondition(property: 'id', value: '456'))
+            ..add(AddCondition(property: 'conditional', value: 'False'))
             ..add(RemoveCondition(property: 'id', value: '123'))
+            ..add(RemoveCondition(property: 'conditional', value: 'False'))
             ..add(RemoveCondition(property: 'id', value: '456'))
+            ..add(RemoveCondition(property: 'conditional', value: 'True'))
             ..add(RemoveCondition(property: 'extra', value: 'something'));
 
           return;
@@ -420,8 +424,37 @@ void main() {
           ConditionsInitialized(
             activeConditions: <String>{
               generateConditionKey('id', '123'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '123'),
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '123'),
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+              generateConditionKey('conditional', 'False'),
+            },
+            availableConditions: {},
+          ),
+          // Conditions start to be removed.
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('id', '456'),
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+              generateConditionKey('conditional', 'False'),
             },
             availableConditions: {},
           ),
@@ -429,6 +462,14 @@ void main() {
             activeConditions: <String>{
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeConditions: <String>{
+              generateConditionKey('extra', 'something'),
+              generateConditionKey('conditional', 'True'),
             },
             availableConditions: {},
           ),
