@@ -20,7 +20,7 @@ void main() {
     id: 'idValue2',
     name: 'nameValue2',
     extra: 'extraValue2',
-    conditional: true,
+    conditional: false,
   );
   const _mockItem3 = MockItemClass(
     id: 'idValue3',
@@ -310,6 +310,59 @@ void main() {
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
+            },
+          )
+        ],
+      );
+
+      blocTest(
+        'formats boolean property values for display without repeating',
+        build: () async {
+          whenListen(
+            _sourceBloc,
+            Stream.value(
+                MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
+          );
+
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
+            sourceBloc: _sourceBloc,
+            filterProperties: ['conditional'],
+          );
+        },
+        expect: [
+          ConditionsInitialized(
+            activeConditions: <String>{},
+            availableConditions: {
+              'conditional': [
+                'True',
+                'False',
+              ],
+            },
+          )
+        ],
+      );
+
+      blocTest(
+        'filtering one item on a boolean property should still add both items',
+        build: () async {
+          whenListen(
+            _sourceBloc,
+            Stream.value(MockSourceBlocClassItems([_mockItem1])),
+          );
+
+          return FilterConditionsBloc<MockSourceBlocClassItems>(
+            sourceBloc: _sourceBloc,
+            filterProperties: ['conditional'],
+          );
+        },
+        expect: [
+          ConditionsInitialized(
+            activeConditions: <String>{},
+            availableConditions: {
+              'conditional': [
+                'True',
+                'False',
+              ],
             },
           )
         ],
