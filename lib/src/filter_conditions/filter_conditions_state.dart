@@ -43,4 +43,7 @@ class ConditionsInitialized extends FilterConditionsState {
 
   @override
   List<Object> get props => [availableConditions, activeConditions];
+
+  @override
+  bool get stringify => true;
 }
