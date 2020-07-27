@@ -106,8 +106,17 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
 
     // If any active condition matches we can immediately return that item.
     return items.where((item) => activeConditions.any((conditionKey) {
-          final conditionKeyValue = splitConditionKey(conditionKey);
-          return item[conditionKeyValue[0]] == conditionKeyValue[1];
+          final parsedConditionKey = splitConditionKey(conditionKey);
+
+          final property = parsedConditionKey[0];
+          final itemValue = item[property];
+          final targetValue = parsedConditionKey[1];
+
+          if (itemValue is bool) {
+            return itemValue.toString() == targetValue.toLowerCase();
+          }
+
+          return itemValue == targetValue;
         }));
   }
 
