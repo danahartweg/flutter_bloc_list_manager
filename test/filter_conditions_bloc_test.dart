@@ -47,22 +47,19 @@ void main() {
       _sourceStreamController.close();
     });
 
-    blocTest(
-      'sets an initial state',
-      build: () async {
-        return FilterConditionsBloc(
-          sourceBloc: _sourceBloc,
-          filterProperties: [],
-        );
-      },
-      skip: 0,
-      expect: [ConditionsUninitialized()],
-    );
+    test('sets an initial state', () {
+      final bloc = FilterConditionsBloc(
+        sourceBloc: _sourceBloc,
+        filterProperties: [],
+      );
+
+      expect(bloc.state, ConditionsUninitialized());
+    });
 
     group('available conditions', () {
       blocTest(
         'does not act on a source bloc state with no items',
-        build: () async {
+        build: () {
           whenListen(_sourceBloc, Stream.value(MockSourceBlocNoItems()));
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
@@ -75,7 +72,7 @@ void main() {
 
       blocTest(
         'handles an empty filter properties array',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
@@ -96,7 +93,7 @@ void main() {
 
       blocTest(
         'extracts each requested filter property from a class',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
@@ -120,7 +117,7 @@ void main() {
 
       blocTest(
         'ignores null, empty, and non-string values',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([
@@ -150,7 +147,7 @@ void main() {
 
       blocTest(
         'extracts from multiple source items',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(
@@ -175,7 +172,7 @@ void main() {
 
       blocTest(
         'updates when the source bloc updates',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.fromIterable([
@@ -209,7 +206,7 @@ void main() {
 
       blocTest(
         'retains valid active conditions when the source list updates',
-        build: () async => FilterConditionsBloc<MockSourceBlocClassItems>(
+        build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
           filterProperties: ['id', 'extra'],
         ),
@@ -265,7 +262,7 @@ void main() {
 
       blocTest(
         'removes duplicate values',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(
@@ -290,7 +287,7 @@ void main() {
 
       blocTest(
         'sorts values alphabetically',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(
@@ -315,7 +312,7 @@ void main() {
 
       blocTest(
         'formats boolean property values for display without repeating',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(
@@ -342,7 +339,7 @@ void main() {
 
       blocTest(
         'filtering one item on a boolean property should still add both items',
-        build: () async {
+        build: () {
           whenListen(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
@@ -370,43 +367,34 @@ void main() {
     group('active conditions', () {
       blocTest(
         'does not add an active condition when uninitialized',
-        build: () async {
-          return FilterConditionsBloc<MockSourceBlocClassItems>(
-            sourceBloc: _sourceBloc,
-            filterProperties: [],
-          );
-        },
+        build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
+          sourceBloc: _sourceBloc,
+          filterProperties: [],
+        ),
         act: (bloc) => bloc.add(AddCondition(property: 'id', value: '123')),
-        skip: 0,
         expect: [ConditionsUninitialized()],
       );
 
       blocTest(
         'adds and removes active conditions',
-        build: () async {
-          whenListen(_sourceBloc, Stream.value(MockSourceBlocClassItems([])));
-
-          return FilterConditionsBloc<MockSourceBlocClassItems>(
-            sourceBloc: _sourceBloc,
-            filterProperties: [],
-          );
-        },
-        act: (bloc) async {
-          bloc
-            ..add(AddCondition(property: 'id', value: '123'))
-            ..add(AddCondition(property: 'extra', value: 'something'))
-            ..add(AddCondition(property: 'conditional', value: 'True'))
-            ..add(AddCondition(property: 'id', value: '456'))
-            ..add(AddCondition(property: 'conditional', value: 'False'))
-            ..add(RemoveCondition(property: 'id', value: '123'))
-            ..add(RemoveCondition(property: 'conditional', value: 'False'))
-            ..add(RemoveCondition(property: 'id', value: '456'))
-            ..add(RemoveCondition(property: 'conditional', value: 'True'))
-            ..add(RemoveCondition(property: 'extra', value: 'something'));
-
-          return;
-        },
-        skip: 2,
+        build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
+          sourceBloc: _sourceBloc,
+          filterProperties: [],
+        )..emit(ConditionsInitialized(
+            availableConditions: {},
+            activeConditions: {},
+          )),
+        act: (bloc) => bloc
+          ..add(AddCondition(property: 'id', value: '123'))
+          ..add(AddCondition(property: 'extra', value: 'something'))
+          ..add(AddCondition(property: 'conditional', value: 'True'))
+          ..add(AddCondition(property: 'id', value: '456'))
+          ..add(AddCondition(property: 'conditional', value: 'False'))
+          ..add(RemoveCondition(property: 'id', value: '123'))
+          ..add(RemoveCondition(property: 'conditional', value: 'False'))
+          ..add(RemoveCondition(property: 'id', value: '456'))
+          ..add(RemoveCondition(property: 'conditional', value: 'True'))
+          ..add(RemoveCondition(property: 'extra', value: 'something')),
         expect: [
           ConditionsInitialized(
             activeConditions: <String>{

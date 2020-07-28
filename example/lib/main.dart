@@ -246,7 +246,7 @@ class FilterConditionsSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.3,
       child: BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
-        bloc: _filterConditionsBloc,
+        cubit: _filterConditionsBloc,
         builder: (_, state) {
           if (state is ConditionsInitialized) {
             // This could be further optimized by removing

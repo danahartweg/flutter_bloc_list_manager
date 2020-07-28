@@ -5,16 +5,14 @@ import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 
 void main() {
   group('SearchQueryBloc', () {
-    blocTest(
-      'sets an initial state',
-      build: () => Future.value(SearchQueryBloc()),
-      skip: 0,
-      expect: [''],
-    );
+    test('sets an initial state', () {
+      final bloc = SearchQueryBloc();
+      expect(bloc.state, '');
+    });
 
     blocTest(
       'sets and clears queries',
-      build: () => Future.value(SearchQueryBloc()),
+      build: () => SearchQueryBloc(),
       act: (bloc) {
         bloc
           ..add(SetSearchQuery('search1'))
@@ -29,7 +27,7 @@ void main() {
 
     blocTest(
       'stores query state lowercase',
-      build: () => Future.value(SearchQueryBloc()),
+      build: () => SearchQueryBloc(),
       act: (bloc) => bloc.add(SetSearchQuery('ABC')),
       expect: ['abc'],
     );
