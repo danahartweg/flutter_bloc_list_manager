@@ -6,6 +6,8 @@
 
 A Flutter package built on top of [flutter_bloc](https://pub.dev/packages/flutter_bloc) that makes it easy to manage filtering and searching a list of items while allowing you to concentrate on building your UI.
 
+Read more about [the implementation](https://medium.com/flutter-community/building-a-package-to-manage-lists-with-flutter-bloc-7197e2dd7811) and about [adding boolean filtering support](https://medium.com/flutter-community/adding-boolean-filtering-to-flutter-bloc-list-manager-5847ee68be26).
+
 ## Widgets
 
 ### ListManager Widget
