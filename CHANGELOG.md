@@ -1,3 +1,11 @@
+## [0.1.4+1]
+
++ Bumped `bloc` to `^6.0.0`
++ Bumped `flutter_bloc` to `^6.0.0`
++ Bumped `bloc_test` to `^7.0.0`
+
+Updated testing code and added links to new documentation. Moved over to the more accepted pre-1.0 semver designations.
+
 ## [0.1.4]
 
 Adds boolean value support for automatic filter condition generation as well as while filtering the source list.

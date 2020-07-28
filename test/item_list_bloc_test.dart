@@ -6,12 +6,10 @@ import 'package:flutter_bloc_list_manager/src/utils.dart';
 
 import './mocks.dart';
 
-class MockFilterConditionsBloc
-    extends MockBloc<FilterConditionsEvent, FilterConditionsState>
+class MockFilterConditionsBloc extends MockBloc<FilterConditionsState>
     implements FilterConditionsBloc {}
 
-class MockSearchQueryBloc extends MockBloc<SearchQueryEvent, String>
-    implements SearchQueryBloc {}
+class MockSearchQueryBloc extends MockBloc<String> implements SearchQueryBloc {}
 
 void main() {
   const _mockItem1 = MockItemClass(
@@ -44,22 +42,19 @@ void main() {
       _sourceBloc = MockSourceBloc();
     });
 
-    blocTest(
-      'sets an initial state',
-      build: () async {
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
-          filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
-          sourceBloc: _sourceBloc,
-        );
-      },
-      skip: 0,
-      expect: [NoSourceItems()],
-    );
+    test('sets an initial state', () {
+      final bloc = ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
+        filterConditionsBloc: _filterConditionsBloc,
+        searchQueryBloc: _searchQueryBloc,
+        sourceBloc: _sourceBloc,
+      );
+
+      expect(bloc.state, NoSourceItems());
+    });
 
     blocTest(
       'requires initialized filter conditions',
-      build: () async {
+      build: () {
         whenListen(
           _sourceBloc,
           Stream.value(MockSourceBlocClassItems([_mockItem1])),
@@ -71,12 +66,13 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
+      skip: 1,
       expect: [],
     );
 
     blocTest(
       'requires a source bloc state with items',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -94,12 +90,13 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
+      skip: 1,
       expect: [],
     );
 
     blocTest(
       'returns all source items with no active filter conditions',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -128,7 +125,7 @@ void main() {
 
     blocTest(
       'sets filter empty state with no source items matching active conditions',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -159,7 +156,7 @@ void main() {
 
     blocTest(
       'returns source items matching a single active condition key',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -193,7 +190,7 @@ void main() {
 
     blocTest(
       'returns source items matching a single active boolean condition key',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -226,7 +223,7 @@ void main() {
 
     blocTest(
       'returns source items matching multiple active condition keys',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -260,7 +257,7 @@ void main() {
 
     blocTest(
       'returns source items matching only a query',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -292,7 +289,7 @@ void main() {
 
     blocTest(
       'returns source items matching a query after filtering',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(
@@ -328,7 +325,7 @@ void main() {
 
     blocTest(
       'sets filter empty state with no source items matching query',
-      build: () async {
+      build: () {
         whenListen(
           _filterConditionsBloc,
           Stream.value(

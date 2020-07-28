@@ -42,14 +42,14 @@ packages:
       name: bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "6.0.1"
   bloc_test:
     dependency: "direct dev"
     description:
       name: bloc_test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.0"
+    version: "7.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -99,20 +99,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.1"
-  cubit:
-    dependency: transitive
-    description:
-      name: cubit
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
-  cubit_test:
-    dependency: transitive
-    description:
-      name: cubit_test
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   effective_dart:
     dependency: "direct dev"
     description:
@@ -138,14 +124,7 @@ packages:
       name: flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
-  flutter_cubit:
-    dependency: transitive
-    description:
-      name: flutter_cubit
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
+    version: "6.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
