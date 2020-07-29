@@ -34,10 +34,12 @@ jobs:
         id: remote_version
         run: |
           GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
-          echo ::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
+          echo '::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')'
 
       - uses: andymckay/cancel-action@0.2
         if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
+        env:
+          test: ${{ steps.remote_version.outputs.version }}
 
       - name: Parse changelog
         id: changelog
