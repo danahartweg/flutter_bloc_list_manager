@@ -16,6 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: subosito/flutter-action@v1.3.2
+        with:
+          flutter-version: "1.17.x"
+          channel: "stable"
+
       # We want to verify we should publish (meaning we've bumped the package version)
       # before generating the changelog and actually publishing.
       - name: Parse local version
@@ -24,8 +29,6 @@ jobs:
         with:
           file: ./pubspec.yaml
           version: version
-        env:
-          formatted: v${{ steps.local_version.outputs.version }}
 
       - name: Parse remote version
         id: remote_version
@@ -40,7 +43,7 @@ jobs:
         id: changelog
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
-          version: ${{ steps.local_version.outputs.formatted }}
+          version: v${{ steps.local_version.outputs.version }}
           path: ./CHANGELOG.md
 
       - name: Release
@@ -48,8 +51,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.local_version.outputs.formatted }}
-          release_name: ${{ steps.local_version.outputs.formatted }}
+          tag_name: v${{ steps.local_version.outputs.version }}
+          release_name: v${{ steps.local_version.outputs.version }}
           draft: true
           prerelease: false
           body: ${{ steps.changelog.outputs.log_entry }}

@@ -10,17 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # If the package version has changed, we want to make sure there's a changelog entry
-      # and that it conforms to the keepachangelog format.
-      - name: Check pub version
-        id: check_version
-        uses: ZerNico/pubspec-version-check@releases/v1
-
-      - uses: zattoo/changelog@v1
-        if: ${{ steps.check_version.outputs.changed == true }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: subosito/flutter-action@v1.3.2
         with:
           flutter-version: "1.17.x"
@@ -39,3 +28,8 @@ jobs:
         uses: ChicagoFlutter/lcov-cop@v1.0.2
         with:
           min_coverage: 75
+
+      - name: Validating changelog
+        uses: zattoo/changelog@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
