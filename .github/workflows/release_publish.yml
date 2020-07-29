@@ -20,7 +20,7 @@ jobs:
       # before generating the changelog and actually publishing.
       - name: Check pub version
         id: check_version
-        uses: ZerNico/pubspec-version-check@1.1
+        uses: ZerNico/pubspec-version-check@@releases/v1
 
       - uses: andymckay/cancel-action@0.2
         if: ${{ steps.check_version.outputs.changed == true }}
