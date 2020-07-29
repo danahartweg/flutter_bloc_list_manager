@@ -22,7 +22,7 @@ jobs:
         id: local_version
         uses: CumulusDS/get-yaml-paths-action@v0.1.0
         with:
-          file: pubspec.yaml
+          file: ./pubspec.yaml
           version: version
         env:
           formatted: v${{ steps.local_version.outputs.version }}
