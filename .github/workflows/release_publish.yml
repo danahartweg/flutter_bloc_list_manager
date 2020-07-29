@@ -18,26 +18,29 @@ jobs:
 
       # We want to verify we should publish (meaning we've bumped the package version)
       # before generating the changelog and actually publishing.
-      - name: Compare package versions
-        id: version
+      - name: Parse local version
+        id: local_version
         uses: CumulusDS/get-yaml-paths-action@v0.1.0
         with:
           file: pubspec.yml
-          local_version: version
+          version: version
+        env:
+          formatted: v${{ steps.local_version.outputs.version }}
+
+      - name: Parse remote version
+        id: remote_version
         run: |
           GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
-          echo ::set-env name=remote_version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
-        env:
-          formatted_local_version: v${{ steps.version.outputs.local_version }}
+          echo ::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
 
       - uses: andymckay/cancel-action@0.2
-        if: ${{ steps.version.outputs.local_version == steps.version.outputs.remote_version }}
+        if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
 
       - name: Parse changelog
         id: changelog
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
-          version: ${{ steps.version.outputs.formatted_local_version }}
+          version: ${{ steps.local_version.outputs.formatted }}
           path: ./CHANGELOG.md
 
       - name: Release
@@ -45,8 +48,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.version.outputs.formatted_local_version }}
-          release_name: ${{ steps.version.outputs.formatted_local_version }}
+          tag_name: ${{ steps.local_version.outputs.formatted }}
+          release_name: ${{ steps.local_version.outputs.formatted }}
           draft: true
           prerelease: false
           body: ${{ steps.changelog.outputs.log_entry }}
