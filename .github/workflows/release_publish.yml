@@ -1,0 +1,52 @@
+name: Release and publish to pub.dev
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+# Commented out to check the workflow without actually merging.
+# on:
+#   push:
+#     branches:
+#       - main
+
+jobs:
+  release_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # We want to verify we should publish (meaning we've bumped the package version)
+      # before generating the changelog and actually publishing.
+      - name: Check pub version
+        id: check_version
+        uses: ZerNico/pubspec-version-check@v1.1
+
+      - uses: andymckay/cancel-action@0.2
+        if: ${{ steps.check_version.outputs.changed == true }}
+
+      - name: Parse changelog
+        id: changelog
+        uses: mindsers/changelog-reader-action@v1.3.1
+        with:
+          version: ${{ steps.check_version.outputs.version }}
+          path: ./CHANGELOG.md
+
+      - name: Release
+        uses: actions/create-release@v1.1.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.check_version.outputs.version }}
+          release_name: ${{ steps.check_version.outputs.version }}
+          draft: true
+          prerelease: false
+          body: ${{ steps.changelog.outputs.log_entry }}
+
+      - name: Publish
+        uses: k-paxian/dart-package-publisher@v1.2
+        with:
+          dryRunOnly: true
+          skipTests: true
+          accessToken: ${{ secrets.PUB_OAUTH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.PUB_OAUTH_REFRESH_TOKEN }}
