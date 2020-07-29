@@ -18,18 +18,26 @@ jobs:
 
       # We want to verify we should publish (meaning we've bumped the package version)
       # before generating the changelog and actually publishing.
-      - name: Check pub version
-        id: check_version
-        uses: ZerNico/pubspec-version-check@@releases-v1
+      - name: Compare package versions
+        id: version
+        uses: CumulusDS/get-yaml-paths-action@v0.1.0
+        with:
+          file: pubspec.yml
+          local_version: version
+        run: |
+          GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
+          echo ::set-env name=remote_version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
+        env:
+          formatted_local_version: v${{ steps.version.outputs.local_version }}
 
       - uses: andymckay/cancel-action@0.2
-        if: ${{ steps.check_version.outputs.changed == true }}
+        if: ${{ steps.version.outputs.local_version == steps.version.outputs.remote_version }}
 
       - name: Parse changelog
         id: changelog
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
-          version: ${{ steps.check_version.outputs.version }}
+          version: ${{ steps.version.outputs.formatted_local_version }}
           path: ./CHANGELOG.md
 
       - name: Release
@@ -37,8 +45,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.check_version.outputs.version }}
-          release_name: ${{ steps.check_version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.formatted_local_version }}
+          release_name: ${{ steps.version.outputs.formatted_local_version }}
           draft: true
           prerelease: false
           body: ${{ steps.changelog.outputs.log_entry }}
