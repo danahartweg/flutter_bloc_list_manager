@@ -14,7 +14,7 @@ jobs:
       # and that it conforms to the keepachangelog format.
       - name: Check pub version
         id: check_version
-        uses: ZerNico/pubspec-version-check@v1.1
+        uses: ZerNico/pubspec-version-check@1.1
 
       - uses: zattoo/changelog@v1
         if: ${{ steps.check_version.outputs.changed == true }}
