@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.4+2] - 2020-07-28
+## [0.2.0] - 2020-07-28
 ### Added
 - Changelog documentation
+
+### Changed
+- Abandoned Dart pre-1.0 semver designations. Bumping the package to account for the minor version bump that should have happened with the addition of boolean value support in 0.1.4.
 
 ## [0.1.4+1] - 2020-07-27
 
