@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Abandoned Dart pre-1.0 semver designations. Bumping the package to account for the minor version bump that should have happened with the addition of boolean value support in 0.1.4.
 
-## [0.1.5] (previously 0.1.4+1) - 2020-07-27
+## [0.1.5] - 2020-07-27
+Previously released as 0.1.4+1
+
 ### Changed
 - Bumped `bloc` to `^6.0.0`
 - Bumped `flutter_bloc` to `^6.0.0`

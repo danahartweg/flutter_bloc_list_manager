@@ -32,8 +32,12 @@ jobs:
 
       - name: Parse remote version
         id: remote_version
+        shell: bash
         run: |
           GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
+          echo bash --version
+          echo grep --version
+          echo $GLOBAL_RESULT
           echo ::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
 
       - uses: andymckay/cancel-action@0.2
