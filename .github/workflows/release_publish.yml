@@ -35,8 +35,9 @@ jobs:
         shell: bash
         run: |
           GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
-          echo bash --version
-          echo grep --version
+          bash --version
+          grep --version
+          sed --version
           echo $GLOBAL_RESULT
           echo ::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
 
@@ -48,9 +49,8 @@ jobs:
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
           version: v${{ steps.local_version.outputs.version }}
-          path: ./CHANGELOG.md
-        env:
           test: ${{ steps.remote_version.outputs.version }}
+          path: ./CHANGELOG.md
 
       - name: Release
         uses: actions/create-release@v1.1.2
