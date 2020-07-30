@@ -33,4 +33,3 @@ jobs:
         uses: zattoo/changelog@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          sources: "lib/, test/"

@@ -38,8 +38,8 @@ jobs:
           bash --version
           grep --version
           sed --version
-          echo $GLOBAL_RESULT
-          echo ::set-env name=version::$(echo $GLOBAL_RESULT | grep -oP 'Activated flutter_bloc_list_manager\s\K(.*)' | rev | cut -c 2- | rev)
+          echo $GLOBAL_RESULT | grep -zoP 'Activated flutter_bloc_list_manager\s\K(.*)' | rev | cut -c 2- | rev
+          echo ::set-env name=version::$(echo $GLOBAL_RESULT | grep -zoP 'Activated flutter_bloc_list_manager\s\K(.*)' | rev | cut -c 2- | rev)
 
       - uses: andymckay/cancel-action@0.2
         if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
@@ -49,8 +49,9 @@ jobs:
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
           version: v${{ steps.local_version.outputs.version }}
-          test: ${{ steps.remote_version.outputs.version }}
           path: ./CHANGELOG.md
+        env:
+          test: ${{ steps.remote_version.outputs.version }}
 
       - name: Release
         uses: actions/create-release@v1.1.2
