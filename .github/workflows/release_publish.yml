@@ -39,7 +39,7 @@ jobs:
           grep --version
           sed --version
           echo $GLOBAL_RESULT
-          echo ::set-env name=version::$(echo $GLOBAL_RESULT | sed -rn 's/^Activated flutter_bloc_list_manager (.*).$/\1/p')
+          echo ::set-env name=version::$(echo $GLOBAL_RESULT | grep -oP 'Activated flutter_bloc_list_manager\s\K(.*)' | rev | cut -c 2- | rev)
 
       - uses: andymckay/cancel-action@0.2
         if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
