@@ -38,8 +38,6 @@ jobs:
 
       - uses: andymckay/cancel-action@0.2
         if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
-        env:
-          test: ${{ steps.remote_version.outputs.version }}
 
       - name: Parse changelog
         id: changelog
@@ -47,6 +45,8 @@ jobs:
         with:
           version: v${{ steps.local_version.outputs.version }}
           path: ./CHANGELOG.md
+        env:
+          test: ${{ steps.remote_version.outputs.version }}
 
       - name: Release
         uses: actions/create-release@v1.1.2
