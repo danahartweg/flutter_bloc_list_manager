@@ -1,5 +1,5 @@
 name: flutter_bloc_list_manager
-version: 0.1.4+1
+version: 0.2.0
 description: >
   Extension to flutter_bloc that handles the underlying logic to filter and search list view data dynamically.
 homepage: https://github.com/danahartweg/flutter_bloc_list_manager

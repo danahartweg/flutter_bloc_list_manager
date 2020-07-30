@@ -1,14 +1,9 @@
 name: Release and publish to pub.dev
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
-
-# Commented out to check the workflow without actually merging.
-# on:
-#   push:
-#     branches:
-#       - main
+  push:
+    branches:
+      - main
 
 jobs:
   release_publish:
@@ -21,8 +16,6 @@ jobs:
           flutter-version: "1.17.x"
           channel: "stable"
 
-      # We want to verify we should publish (meaning we've bumped the package version)
-      # before generating the changelog and actually publishing.
       - name: Parse local version
         id: local_version
         uses: CumulusDS/get-yaml-paths-action@v0.1.0
@@ -37,10 +30,8 @@ jobs:
           GLOBAL_RESULT=`flutter pub global activate --no-executables flutter_bloc_list_manager`
           echo ::set-output name=version::$(echo $GLOBAL_RESULT | grep -zoP 'Activated flutter_bloc_list_manager\s\K(.*)' | rev | cut -c 2- | rev)
 
-      - uses: andymckay/cancel-action@0.2
-        if: ${{ steps.local_version.outputs.version == steps.remote_version.outputs.version }}
-
       - name: Parse changelog
+        if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
         id: changelog
         uses: mindsers/changelog-reader-action@v1.3.1
         with:
@@ -50,20 +41,19 @@ jobs:
           test: ${{ steps.remote_version.outputs.version }}
 
       - name: Release
+        if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
         uses: actions/create-release@v1.1.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.local_version.outputs.version }}
           release_name: v${{ steps.local_version.outputs.version }}
-          draft: true
-          prerelease: false
           body: ${{ steps.changelog.outputs.log_entry }}
 
       - name: Publish
+        if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
         uses: k-paxian/dart-package-publisher@v1.2
         with:
-          dryRunOnly: true
           skipTests: true
           accessToken: ${{ secrets.PUB_OAUTH_ACCESS_TOKEN }}
           refreshToken: ${{ secrets.PUB_OAUTH_REFRESH_TOKEN }}
