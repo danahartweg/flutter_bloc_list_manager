@@ -9,7 +9,8 @@ import './mocks.dart';
 class MockFilterConditionsBloc extends MockBloc<FilterConditionsState>
     implements FilterConditionsBloc {}
 
-class MockSearchQueryBloc extends MockBloc<String> implements SearchQueryBloc {}
+class MockSearchQueryCubit extends MockBloc<String>
+    implements SearchQueryCubit {}
 
 void main() {
   const _mockItem1 = MockItemClass(
@@ -33,19 +34,19 @@ void main() {
 
   group('ItemListBloc', () {
     MockFilterConditionsBloc _filterConditionsBloc;
-    MockSearchQueryBloc _searchQueryBloc;
+    MockSearchQueryCubit _searchQueryCubit;
     MockSourceBloc _sourceBloc;
 
     setUp(() {
       _filterConditionsBloc = MockFilterConditionsBloc();
-      _searchQueryBloc = MockSearchQueryBloc();
+      _searchQueryCubit = MockSearchQueryCubit();
       _sourceBloc = MockSourceBloc();
     });
 
     test('sets an initial state', () {
       final bloc = ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
         filterConditionsBloc: _filterConditionsBloc,
-        searchQueryBloc: _searchQueryBloc,
+        searchQueryCubit: _searchQueryCubit,
         sourceBloc: _sourceBloc,
       );
 
@@ -62,7 +63,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -82,11 +83,11 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -106,7 +107,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
         whenListen(
           _sourceBloc,
           Stream.value(MockSourceBlocClassItems([_mockItem1])),
@@ -114,7 +115,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -137,7 +138,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -147,7 +148,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -169,7 +170,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -179,7 +180,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -202,7 +203,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -212,7 +213,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -236,7 +237,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value(''));
+        whenListen(_searchQueryCubit, Stream.value(''));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -246,7 +247,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
         );
       },
@@ -267,7 +268,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value('value2'));
+        whenListen(_searchQueryCubit, Stream.value('value2'));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -277,7 +278,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
           searchProperties: ['extra'],
         );
@@ -303,7 +304,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value('value2'));
+        whenListen(_searchQueryCubit, Stream.value('value2'));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -313,7 +314,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
           searchProperties: ['extra'],
         );
@@ -339,7 +340,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryBloc, Stream.value('123'));
+        whenListen(_searchQueryCubit, Stream.value('123'));
         whenListen(
           _sourceBloc,
           Stream.value(
@@ -349,7 +350,7 @@ void main() {
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
-          searchQueryBloc: _searchQueryBloc,
+          searchQueryCubit: _searchQueryCubit,
           sourceBloc: _sourceBloc,
           searchProperties: ['extra'],
         );

@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 
 import '../filter_conditions/filter_conditions_bloc.dart';
 import '../item_source.dart';
-import '../search_query/search_query_bloc.dart';
+import '../search_query/search_query.dart';
 import '../utils.dart';
 
 part 'item_list_state.dart';
@@ -18,7 +18,7 @@ enum _itemListEvent {
 }
 
 /// {@template itemlistbloc}
-/// Attaches to the provided [_filterConditionsBloc], [_searchQueryBloc],
+/// Attaches to the provided [_filterConditionsBloc], [_searchQueryCubit],
 /// and [_sourceBloc] and uses supplied [_searchProperties]
 /// in order to generate a list of items that should be rendered to the UI.
 ///
@@ -34,7 +34,7 @@ enum _itemListEvent {
 class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
     extends Bloc<_itemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
-  final SearchQueryBloc _searchQueryBloc;
+  final SearchQueryCubit _searchQueryCubit;
   final Bloc _sourceBloc;
   final List<String> _searchProperties;
 
@@ -45,14 +45,14 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
   /// {@macro itemlistbloc}
   ItemListBloc({
     @required FilterConditionsBloc filterConditionsBloc,
-    @required SearchQueryBloc searchQueryBloc,
+    @required SearchQueryCubit searchQueryCubit,
     @required Bloc sourceBloc,
     List<String> searchProperties,
   })  : assert(filterConditionsBloc != null),
-        assert(searchQueryBloc != null),
+        assert(searchQueryCubit != null),
         assert(sourceBloc != null),
         _filterConditionsBloc = filterConditionsBloc,
-        _searchQueryBloc = searchQueryBloc,
+        _searchQueryCubit = searchQueryCubit,
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties,
         super(NoSourceItems()) {
@@ -60,7 +60,7 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
       add(_itemListEvent.filterConditionsUpdated);
     });
 
-    _searchQuerySubscription = _searchQueryBloc.listen((_) {
+    _searchQuerySubscription = _searchQueryCubit.listen((_) {
       add(_itemListEvent.searchQueryUpdated);
     });
 
@@ -87,7 +87,7 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
 
     final items = (_sourceBloc.state as T).items;
     final filterResults = _filterSource(items);
-    final searchResults = _searchSource(_searchQueryBloc.state, filterResults);
+    final searchResults = _searchSource(_searchQueryCubit.state, filterResults);
 
     if (searchResults.isEmpty) {
       yield ItemEmptyState();
