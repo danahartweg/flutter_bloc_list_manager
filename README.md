@@ -106,8 +106,8 @@ The simplest bloc of the bunch, the `SearchQueryCubit` is solely responsible for
 
 _Example_
 ```dart
-context.bloc<SearchQueryCubit>().add(SetSearchQuery('query'));
-context.bloc<SearchQueryCubit>().add(ClearSearchQuery());
+context.bloc<SearchQueryCubit>().setQuery('query');
+context.bloc<SearchQueryCubit>().clearQuery();
 ```
 
 ### ItemListBloc
