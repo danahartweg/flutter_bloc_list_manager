@@ -57,10 +57,11 @@ void main() {
     });
 
     group('available conditions', () {
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'does not act on a source bloc state with no items',
         build: () {
-          whenListen(_sourceBloc, Stream.value(MockSourceBlocNoItems()));
+          whenListen<MockSourceBlocState>(
+              _sourceBloc, Stream.value(MockSourceBlocNoItems()));
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
             sourceBloc: _sourceBloc,
@@ -70,10 +71,10 @@ void main() {
         expect: [],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'handles an empty filter properties array',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
           );
@@ -91,10 +92,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'extracts each requested filter property from a class',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
           );
@@ -115,10 +116,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'ignores null, empty, and non-string values',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([
               MockItemClass(
@@ -145,10 +146,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'extracts from multiple source items',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(
                 MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
@@ -170,10 +171,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'updates when the source bloc updates',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.fromIterable([
               MockSourceBlocClassItems([_mockItem1]),
@@ -204,7 +205,7 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'retains valid active conditions when the source list updates',
         build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
@@ -260,10 +261,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'removes duplicate values',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(
                 MockSourceBlocClassItems([_mockItem1, _mockItem1, _mockItem2])),
@@ -285,10 +286,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'sorts values alphabetically',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(
                 MockSourceBlocClassItems([_mockItem3, _mockItem2, _mockItem1])),
@@ -310,10 +311,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'formats boolean property values for display without repeating',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(
                 MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
@@ -337,10 +338,10 @@ void main() {
         ],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'filtering one item on a boolean property should still add both items',
         build: () {
-          whenListen(
+          whenListen<MockSourceBlocState>(
             _sourceBloc,
             Stream.value(MockSourceBlocClassItems([_mockItem1])),
           );
@@ -365,7 +366,7 @@ void main() {
     });
 
     group('active conditions', () {
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'does not add an active condition when uninitialized',
         build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
@@ -375,7 +376,7 @@ void main() {
         expect: [ConditionsUninitialized()],
       );
 
-      blocTest(
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
         'adds and removes active conditions',
         build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
           sourceBloc: _sourceBloc,
@@ -479,7 +480,7 @@ void main() {
       final stream = Stream.value(MockSourceBlocNoItems()).asBroadcastStream();
       final onDoneCallback = expectAsync0(() {});
 
-      whenListen(_sourceBloc, stream);
+      whenListen<MockSourceBlocState>(_sourceBloc, stream);
       stream.listen((_) {}, onDone: onDoneCallback);
 
       final filterConditionsBloc = FilterConditionsBloc(

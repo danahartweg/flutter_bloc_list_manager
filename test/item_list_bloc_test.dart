@@ -53,10 +53,10 @@ void main() {
       expect(bloc.state, NoSourceItems());
     });
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'requires initialized filter conditions',
       build: () {
-        whenListen(
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(MockSourceBlocClassItems([_mockItem1])),
         );
@@ -71,10 +71,10 @@ void main() {
       expect: [],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'requires a source bloc state with items',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -83,7 +83,7 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
@@ -95,10 +95,10 @@ void main() {
       expect: [],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns all source items with no active filter conditions',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -107,8 +107,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(MockSourceBlocClassItems([_mockItem1])),
         );
@@ -124,10 +124,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'sets filter empty state with no source items matching active conditions',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -138,8 +138,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -155,10 +155,10 @@ void main() {
       expect: [ItemEmptyState()],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns source items matching a single active condition key',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -170,8 +170,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -189,10 +189,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns source items matching a single active boolean condition key',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -203,8 +203,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -222,10 +222,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns source items matching multiple active condition keys',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -237,8 +237,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value(''));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value(''));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -256,10 +256,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns source items matching only a query',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -268,8 +268,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value('value2'));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value('value2'));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -288,10 +288,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'returns source items matching a query after filtering',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -304,8 +304,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value('value2'));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value('value2'));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
@@ -324,10 +324,10 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<ItemListBloc, ItemListState>(
       'sets filter empty state with no source items matching query',
       build: () {
-        whenListen(
+        whenListen<FilterConditionsState>(
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
@@ -340,8 +340,8 @@ void main() {
             ),
           ),
         );
-        whenListen(_searchQueryCubit, Stream.value('123'));
-        whenListen(
+        whenListen<String>(_searchQueryCubit, Stream.value('123'));
+        whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
             MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
