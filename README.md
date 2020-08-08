@@ -40,7 +40,7 @@ BlocProvider<SourceBloc>(
             return Text('Render filter conditions UI.');
           },
         ),
-        BlocBuilder<SearchQueryBloc, String>(
+        BlocBuilder<SearchQueryCubit, String>(
           builder: (context, state) {
             return Text('Render Search UI.');
           },
@@ -100,14 +100,14 @@ context.bloc<FilterConditionsBloc>().add(RemoveCondition('property', 'value'));
 
 Note: If you want to manually toggle a boolean condition (i.e. not via constructing UI from the `availableConditions`), you would want to use `AddCondition('booleanProperty', 'True')` or `AddCondition('booleanProperty', 'False')` as those are the underlying display values.
 
-### SearchQueryBloc
+### SearchQueryCubit
 
-The simplest bloc of the bunch, the `SearchQueryBloc` is solely responsible for setting or clearing the search query that drives list searching.
+The simplest bloc of the bunch, the `SearchQueryCubit` is solely responsible for setting or clearing the search query that drives list searching.
 
 _Example_
 ```dart
-context.bloc<SearchQueryBloc>().add(SetSearchQuery('query'));
-context.bloc<SearchQueryBloc>().add(ClearSearchQuery());
+context.bloc<SearchQueryCubit>().add(SetSearchQuery('query'));
+context.bloc<SearchQueryCubit>().add(ClearSearchQuery());
 ```
 
 ### ItemListBloc
@@ -201,7 +201,7 @@ class SourceLoaded extends SourceBlocState implements ItemSourceState<ItemClass>
 ## Upcoming improvements
 
 + Pluggable search callback (allowing integration of fuzzy search)
-+ Conditional instantiation of the `SearchQueryBloc`
++ Conditional instantiation of the `SearchQueryCubit`
 + Integrating opinionated pre-composed UI widgets
 + Potentially moving away from the source bloc concept and requiring a repository instead
 

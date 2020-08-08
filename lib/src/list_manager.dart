@@ -33,7 +33,7 @@ import '../flutter_bloc_list_manager.dart';
 ///                   return Text('Render your filter conditions UI.');
 ///                 },
 ///               ),
-///               BlocBuilder<SearchQueryBloc, String>(
+///               BlocBuilder<SearchQueryCubit, String>(
 ///                 builder: (context, state) {
 ///                   return Text('Render your Search UI.');
 ///                 },
@@ -91,14 +91,14 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
             filterProperties: filterProperties,
           ),
         ),
-        BlocProvider<SearchQueryBloc>(
-          create: (context) => SearchQueryBloc(),
+        BlocProvider<SearchQueryCubit>(
+          create: (context) => SearchQueryCubit(),
         ),
         BlocProvider<ItemListBloc>(
           create: (context) => ItemListBloc<I, T>(
             sourceBloc: _sourceBloc,
             filterConditionsBloc: context.bloc<FilterConditionsBloc>(),
-            searchQueryBloc: context.bloc<SearchQueryBloc>(),
+            searchQueryCubit: context.bloc<SearchQueryCubit>(),
             searchProperties: searchProperties,
           ),
         )

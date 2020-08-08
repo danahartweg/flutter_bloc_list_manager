@@ -170,11 +170,11 @@ void main() {
   );
 }
 
-// Render an input that will funnel the value into the SearchQueryBloc.
+// Render an input that will funnel the value into the SearchQueryCubit.
 class SearchInput extends StatelessWidget {
   @override
   Widget build(_) {
-    return BlocBuilder<SearchQueryBloc, String>(
+    return BlocBuilder<SearchQueryCubit, String>(
       builder: (context, state) {
         return Flexible(
           child: TextField(
@@ -184,7 +184,7 @@ class SearchInput extends StatelessWidget {
             ),
             textInputAction: TextInputAction.search,
             onChanged: (value) =>
-                context.bloc<SearchQueryBloc>().add(SetSearchQuery(value)),
+                context.bloc<SearchQueryCubit>().setQuery(value),
           ),
         );
       },
