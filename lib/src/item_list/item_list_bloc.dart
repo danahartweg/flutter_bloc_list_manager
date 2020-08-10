@@ -97,15 +97,16 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
   }
 
   Iterable<I> _filterSource(List<I> items) {
-    final activeConditions =
-        (_filterConditionsBloc.state as ConditionsInitialized).activeConditions;
+    final activeOrConditions =
+        (_filterConditionsBloc.state as ConditionsInitialized)
+            .activeOrConditions;
 
-    if (activeConditions.isEmpty) {
+    if (activeOrConditions.isEmpty) {
       return items;
     }
 
     // If any active condition matches we can immediately return that item.
-    return items.where((item) => activeConditions.any((conditionKey) {
+    return items.where((item) => activeOrConditions.any((conditionKey) {
           final parsedConditionKey = splitConditionKey(conditionKey);
 
           final property = parsedConditionKey[0];

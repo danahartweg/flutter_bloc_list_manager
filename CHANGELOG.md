@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added `OR` and `AND` modes for filtering
-- Allow filter mode override for specific conditions
+- Added `or` and `and` modes for filtering
+- The `AddCondition` event now supports an optional `mode`, defaulting to `or`
+
+### Changed
+- **Breaking:** `activeConditions` is now `activeOrConditions`
+  - This mainly affects the `ConditionsInitialized` state of the `FilterConditionsBloc`
 
 ## [0.3.1] - 2020-08-08
 ### Fixed

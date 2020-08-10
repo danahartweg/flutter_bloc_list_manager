@@ -78,7 +78,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{},
+              activeAndConditions: {},
+              activeOrConditions: {},
               availableConditions: {},
             ),
           ),
@@ -102,7 +103,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{},
+              activeAndConditions: {},
+              activeOrConditions: {},
               availableConditions: {},
             ),
           ),
@@ -131,7 +133,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('id', '123'),
               },
               availableConditions: {},
@@ -162,7 +165,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('id', _mockItem1.id),
                 generateConditionKey('id', _mockItem3.id),
               },
@@ -196,7 +200,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('conditional', 'True'),
               },
               availableConditions: {},
@@ -229,7 +234,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('id', _mockItem1.id),
                 generateConditionKey('conditional', 'True'),
               },
@@ -263,7 +269,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{},
+              activeAndConditions: {},
+              activeOrConditions: {},
               availableConditions: {},
             ),
           ),
@@ -295,7 +302,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('id', _mockItem1.id),
                 generateConditionKey('id', _mockItem2.id),
                 generateConditionKey('id', _mockItem3.id),
@@ -331,7 +339,8 @@ void main() {
           _filterConditionsBloc,
           Stream.value(
             ConditionsInitialized(
-              activeConditions: <String>{
+              activeAndConditions: {},
+              activeOrConditions: {
                 generateConditionKey('id', _mockItem1.id),
                 generateConditionKey('id', _mockItem2.id),
                 generateConditionKey('id', _mockItem3.id),
