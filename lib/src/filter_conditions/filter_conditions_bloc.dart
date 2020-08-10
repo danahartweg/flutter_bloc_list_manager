@@ -104,6 +104,9 @@ class FilterConditionsBloc<T extends ItemSourceState>
             availableConditions[property].toSet().toList()..sort();
       }
 
+      _conditionKeyTracker
+          .removeWhere((key, _) => !availableConditionKeys.contains(key));
+
       add(RefreshConditions(
         activeAndConditions:
             activeAndConditions.intersection(availableConditionKeys),
@@ -165,7 +168,6 @@ class FilterConditionsBloc<T extends ItemSourceState>
     }
 
     _conditionKeyTracker[conditionKey] = event.mode;
-
     return ConditionsInitialized(
       activeAndConditions: activeAndConditions,
       activeOrConditions: activeOrConditions,
@@ -203,6 +205,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
         break;
     }
 
+    _conditionKeyTracker.remove(conditionKey);
     return ConditionsInitialized(
       activeAndConditions: activeAndConditions,
       activeOrConditions: activeOrConditions,
@@ -221,13 +224,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
   /// Helper that checks whether a [value] for a given [property] exists in
   /// the current state as an active condition.
   bool isConditionActive(String property, String value) {
-    final currentState = state;
     final conditionKey = generateConditionKey(property, value);
-
-    return currentState is ConditionsInitialized
-        ? currentState.activeAndConditions.contains(conditionKey) ||
-            currentState.activeOrConditions.contains(conditionKey)
-        : false;
+    return _conditionKeyTracker.containsKey(conditionKey);
   }
 
   @override

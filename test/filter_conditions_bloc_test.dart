@@ -605,6 +605,70 @@ void main() {
       );
     });
 
+    test('returns whether a condition is active or not', () async {
+      final bloc = FilterConditionsBloc(
+        sourceBloc: _sourceBloc,
+        filterProperties: [],
+      )..emit(ConditionsInitialized(
+          activeAndConditions: {},
+          activeOrConditions: {},
+          availableConditions: {},
+        ));
+
+      expect(bloc.isConditionActive('nothing', 'here'), false);
+
+      bloc.add(AddCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), true);
+
+      bloc.add(AddCondition(
+        property: 'extra',
+        value: 'something',
+        mode: FilterMode.and,
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('extra', 'something'), true);
+
+      bloc.add(RemoveCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), false);
+
+      bloc.add(RemoveCondition(
+        property: 'extra',
+        value: 'something',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('extra', 'something'), false);
+    });
+
+    test('keeps active conditions up to date if the source changes', () async {
+      final bloc = FilterConditionsBloc(
+        sourceBloc: _sourceBloc,
+        filterProperties: [],
+      )..emit(ConditionsInitialized(
+          activeAndConditions: {},
+          activeOrConditions: {},
+          availableConditions: {},
+        ));
+
+      bloc.add(AddCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), true);
+
+      _sourceStreamController.add(MockSourceBlocClassItems([]));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), false);
+    });
+
     test('closes the source bloc subscription', () {
       final stream = Stream.value(MockSourceBlocNoItems()).asBroadcastStream();
       final onDoneCallback = expectAsync0(() {});
