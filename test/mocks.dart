@@ -22,12 +22,14 @@ class MockItemClass extends Equatable implements ItemClassWithAccessor {
   final String id;
   final String name;
   final String extra;
+  final String common;
   final bool conditional;
 
   const MockItemClass({
     this.id,
     this.name,
     this.extra,
+    this.common,
     this.conditional,
   });
 
@@ -42,6 +44,9 @@ class MockItemClass extends Equatable implements ItemClassWithAccessor {
       case 'extra':
         return extra;
         break;
+      case 'common':
+        return common;
+        break;
       case 'conditional':
         return conditional;
         break;
@@ -53,7 +58,7 @@ class MockItemClass extends Equatable implements ItemClassWithAccessor {
   }
 
   @override
-  List<Object> get props => [id, name, extra, conditional];
+  List<Object> get props => [id, name, extra, common, conditional];
 }
 
 class MockSourceBlocClassItems extends MockSourceBlocState
