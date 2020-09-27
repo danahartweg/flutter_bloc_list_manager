@@ -108,19 +108,8 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
     return items.where((item) {
       final hasMatchedOrConditions = activeOrConditions.isEmpty
           ? true
-          : activeOrConditions.any((conditionKey) {
-              final parsedConditionKey = splitConditionKey(conditionKey);
-
-              final property = parsedConditionKey[0];
-              final itemValue = item[property];
-              final targetValue = parsedConditionKey[1];
-
-              if (itemValue is bool) {
-                return itemValue.toString() == targetValue.toLowerCase();
-              }
-
-              return itemValue == targetValue;
-            });
+          : activeOrConditions.any(
+              (conditionKey) => _evaluateFilterCondition(item, conditionKey));
 
       if (!hasMatchedOrConditions) {
         return false;
@@ -128,19 +117,8 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
 
       final hasMatchedAndConditions = activeAndConditions.isEmpty
           ? true
-          : activeAndConditions.every((conditionKey) {
-              final parsedConditionKey = splitConditionKey(conditionKey);
-
-              final property = parsedConditionKey[0];
-              final itemValue = item[property];
-              final targetValue = parsedConditionKey[1];
-
-              if (itemValue is bool) {
-                return itemValue.toString() == targetValue.toLowerCase();
-              }
-
-              return itemValue == targetValue;
-            });
+          : activeAndConditions.every(
+              (conditionKey) => _evaluateFilterCondition(item, conditionKey));
 
       return hasMatchedAndConditions && hasMatchedOrConditions;
     });
@@ -159,6 +137,20 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
               ? value.toLowerCase().contains(searchQuery)
               : false;
         }));
+  }
+
+  bool _evaluateFilterCondition(I item, String conditionKey) {
+    final parsedConditionKey = splitConditionKey(conditionKey);
+
+    final property = parsedConditionKey[0];
+    final itemValue = item[property];
+    final targetValue = parsedConditionKey[1];
+
+    if (itemValue is bool) {
+      return itemValue.toString() == targetValue.toLowerCase();
+    }
+
+    return itemValue == targetValue;
   }
 
   @override
