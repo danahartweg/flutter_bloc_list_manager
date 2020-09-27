@@ -143,6 +143,13 @@ context.bloc<SearchQueryCubit>().clearQuery();
 
 `ItemListBloc` is responsible for connecting all of the other blocs, performing the actual filtering and searching, and providing state in order to render your list UI. There is never a reason to dispatch events to this bloc.
 
+_Note on filter modes_
+Without a much more sophisticated means to assemble filter queries, there is no current way to support compound filtering: i.e. `(Condition 1 AND Condition 2) OR (Condition 3 AND Condition 4)` or priority scenarios: i.e. the difference between `(Condition 1 OR Condition 2 OR Condition 3) AND Condition 4` and `Condition 4 AND (Condition 1 OR Condition 2 OR Condition 3)`. As such, we've chosen to implement filtering such that additive (`or`) conditions are matched first and subtractive (`and`) conditions are matched last.
+
+Practically, what does this mean?
+
+Your list of items will first be filtered such that *every item* matching *any* single `or` condition is sent through. The resulting list will then be filtered such that *every item* matching *all* `and` conditions are sent through. The `and` conditions technically refine the resulting list and the `or` conditions generate the first pass of the list that should be refined.
+
 _Example_
 
 ```dart
