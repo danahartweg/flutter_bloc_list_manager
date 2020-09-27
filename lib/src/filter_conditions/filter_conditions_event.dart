@@ -56,6 +56,7 @@ class AddCondition extends FilterConditionsEvent {
   /// The value to be added.
   final String value;
 
+  /// The filter mode to use for this condition.
   final FilterMode mode;
 
   /// {@macro addcondition}
