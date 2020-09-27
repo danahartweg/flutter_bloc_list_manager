@@ -97,27 +97,31 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
   }
 
   Iterable<I> _filterSource(List<I> items) {
-    final activeConditions =
-        (_filterConditionsBloc.state as ConditionsInitialized).activeConditions;
+    final filterState = (_filterConditionsBloc.state as ConditionsInitialized);
+    final activeAndConditions = filterState.activeAndConditions;
+    final activeOrConditions = filterState.activeOrConditions;
 
-    if (activeConditions.isEmpty) {
+    if (activeAndConditions.isEmpty && activeOrConditions.isEmpty) {
       return items;
     }
 
-    // If any active condition matches we can immediately return that item.
-    return items.where((item) => activeConditions.any((conditionKey) {
-          final parsedConditionKey = splitConditionKey(conditionKey);
+    return items.where((item) {
+      final hasMatchedOrConditions = activeOrConditions.isEmpty
+          ? true
+          : activeOrConditions.any(
+              (conditionKey) => _evaluateFilterCondition(item, conditionKey));
 
-          final property = parsedConditionKey[0];
-          final itemValue = item[property];
-          final targetValue = parsedConditionKey[1];
+      if (!hasMatchedOrConditions) {
+        return false;
+      }
 
-          if (itemValue is bool) {
-            return itemValue.toString() == targetValue.toLowerCase();
-          }
+      final hasMatchedAndConditions = activeAndConditions.isEmpty
+          ? true
+          : activeAndConditions.every(
+              (conditionKey) => _evaluateFilterCondition(item, conditionKey));
 
-          return itemValue == targetValue;
-        }));
+      return hasMatchedAndConditions && hasMatchedOrConditions;
+    });
   }
 
   Iterable<I> _searchSource(String searchQuery, Iterable<I> items) {
@@ -133,6 +137,20 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
               ? value.toLowerCase().contains(searchQuery)
               : false;
         }));
+  }
+
+  bool _evaluateFilterCondition(I item, String conditionKey) {
+    final parsedConditionKey = splitConditionKey(conditionKey);
+
+    final property = parsedConditionKey[0];
+    final itemValue = item[property];
+    final targetValue = parsedConditionKey[1];
+
+    if (itemValue is bool) {
+      return itemValue.toString() == targetValue.toLowerCase();
+    }
+
+    return itemValue == targetValue;
   }
 
   @override

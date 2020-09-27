@@ -32,15 +32,28 @@ class ConditionsInitialized extends FilterConditionsState {
   final Map<String, List<String>> availableConditions;
 
   /// Any `property::value` pairs that are currently being
-  /// used to filter items from the source bloc.
+  /// used to filter items from the source bloc using the `and` mode.
   ///
   /// There should be no need to interact directly with this state property.
-  final Set<String> activeConditions;
+  final Set<String> activeAndConditions;
+
+  /// Any `property::value` pairs that are currently being
+  /// used to filter items from the source bloc using the `or` mode.
+  ///
+  /// There should be no need to interact directly with this state property.
+  final Set<String> activeOrConditions;
 
   /// {@macro conditionsinitialized}
-  const ConditionsInitialized(
-      {@required this.availableConditions, @required this.activeConditions});
+  const ConditionsInitialized({
+    @required this.availableConditions,
+    @required this.activeAndConditions,
+    @required this.activeOrConditions,
+  });
 
   @override
-  List<Object> get props => [availableConditions, activeConditions];
+  List<Object> get props => [
+        availableConditions,
+        activeAndConditions,
+        activeOrConditions,
+      ];
 }

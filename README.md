@@ -17,16 +17,19 @@ The `ListManager` widget is the entry-point to accessing the blocs provided by t
 `ListManager` should be established with:
 
 _Types_
-+ `I` - the [item class](#ItemClassWithAccessor) holding the data for the list
-+ `T` - the [state](#ItemSourceState) containing the loaded items
-+ `B` - the bloc that contains the above state
+
+- `I` - the [item class](#ItemClassWithAccessor) holding the data for the list
+- `T` - the [state](#ItemSourceState) containing the loaded items
+- `B` - the bloc that contains the above state
 
 _Parameters_
-+ `filterProperties` - properties that exist on your item class `I` that should be used to generate filter conditions
-+ `searchProperties` - properties that exist on your item class `I` that should be used to run search queries against
-+ `child` - the widget to be rendered by the `ListManager`, which will have access to the remaining blocs
+
+- `filterProperties` - properties that exist on your item class `I` that should be used to generate filter conditions
+- `searchProperties` - properties that exist on your item class `I` that should be used to run search queries against
+- `child` - the widget to be rendered by the `ListManager`, which will have access to the remaining blocs
 
 _Example_
+
 ```dart
 BlocProvider<SourceBloc>(
   create: (_) => SourceBloc(),
@@ -65,6 +68,7 @@ String values are treated normally.
 Boolean values are treated a little differently. If a boolean value is requested to be used as a `filterCondition`, display-friendly `True` and `False` conditions will automatically be added for you.
 
 _Example_
+
 ```dart
 BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
   builder: (_, state) {
@@ -90,21 +94,46 @@ BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
 )
 ```
 
+#### Dispatching events
+
 Events can be dispatched against the `FilterConditionsBloc` to add/remove active property/value condition pairs. Whenever the source bloc is updated, active conditions that no longer apply are automatically removed.
 
 _Example_
+
 ```dart
-context.bloc<FilterConditionsBloc>().add(AddCondition('property', 'value'));
-context.bloc<FilterConditionsBloc>().add(RemoveCondition('property', 'value'));
+context.bloc<FilterConditionsBloc>().add(AddCondition(
+  property: 'property',
+  value: 'value',
+));
+
+context.bloc<FilterConditionsBloc>().add(RemoveCondition(
+  property: 'property',
+  value: 'value',
+));
 ```
 
 Note: If you want to manually toggle a boolean condition (i.e. not via constructing UI from the `availableConditions`), you would want to use `AddCondition('booleanProperty', 'True')` or `AddCondition('booleanProperty', 'False')` as those are the underlying display values.
 
-### SearchQueryCubit
+#### Filter modes
 
-The simplest bloc of the bunch, the `SearchQueryCubit` is solely responsible for setting or clearing the search query that drives list searching.
+You can choose to override the default filter mode when adding a specific condition for filtering. Perhaps you'd like the main filtering UI to be additive, but you would like to add a global toggle to add and remove a subtractive filter condition into the mix.
 
 _Example_
+
+```dart
+context.bloc<FilterConditionsBloc>().add(AddCondition(
+  property: 'property',
+  value: 'value',
+  mode: FilterMode.and,
+));
+```
+
+### SearchQueryCubit
+
+The simplest cubit of the bunch, the `SearchQueryCubit` is solely responsible for setting or clearing the search query that drives list searching.
+
+_Example_
+
 ```dart
 context.bloc<SearchQueryCubit>().setQuery('query');
 context.bloc<SearchQueryCubit>().clearQuery();
@@ -114,7 +143,15 @@ context.bloc<SearchQueryCubit>().clearQuery();
 
 `ItemListBloc` is responsible for connecting all of the other blocs, performing the actual filtering and searching, and providing state in order to render your list UI. There is never a reason to dispatch events to this bloc.
 
+_Note on filter modes_
+Without a much more sophisticated means to assemble filter queries, there is no current way to support compound filtering: i.e. `(Condition 1 AND Condition 2) OR (Condition 3 AND Condition 4)` or priority scenarios: i.e. the difference between `(Condition 1 OR Condition 2 OR Condition 3) AND Condition 4` and `Condition 4 AND (Condition 1 OR Condition 2 OR Condition 3)`. As such, we've chosen to implement filtering such that additive (`or`) conditions are matched first and subtractive (`and`) conditions are matched last.
+
+Practically, what does this mean?
+
+Your list of items will first be filtered such that *every item* matching *any* single `or` condition is sent through. The resulting list will then be filtered such that *every item* matching *all* `and` conditions are sent through. The `and` conditions technically refine the resulting list and the `or` conditions generate the first pass of the list that should be refined.
+
 _Example_
+
 ```dart
 BlocBuilder<ItemListBloc, ItemListState>(
   builder: (_, state) {
@@ -187,6 +224,7 @@ class ItemClass extends Equatable implements ItemClassWithAccessor {
 You are free to manage your source bloc however you see fit. The only requirement in order to instantiate a `ListManager` is that one of the states of your source bloc must implement `ItemSourceState`. This allows blocs in this package to know when source items are actually flowing through your source bloc.
 
 _Example_
+
 ```dart
 class SourceLoaded extends SourceBlocState implements ItemSourceState<ItemClass> {
   final items;
@@ -200,10 +238,10 @@ class SourceLoaded extends SourceBlocState implements ItemSourceState<ItemClass>
 
 ## Upcoming improvements
 
-+ Pluggable search callback (allowing integration of fuzzy search)
-+ Conditional instantiation of the `SearchQueryCubit`
-+ Integrating opinionated pre-composed UI widgets
-+ Potentially moving away from the source bloc concept and requiring a repository instead
+- Pluggable search callback (allowing integration of fuzzy search)
+- Conditional instantiation of the `SearchQueryCubit`
+- Integrating opinionated pre-composed UI widgets
+- Potentially moving away from the source bloc concept and requiring a repository instead
 
 ## Examples
 

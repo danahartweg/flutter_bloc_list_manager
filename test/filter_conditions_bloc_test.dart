@@ -86,7 +86,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {},
           )
         ],
@@ -107,7 +108,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
@@ -137,7 +139,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'name': [],
               'extra': [],
@@ -162,7 +165,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -189,14 +193,16 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem2.id, _mockItem3.id],
               'extra': [_mockItem2.extra, _mockItem3.extra],
@@ -218,8 +224,18 @@ void main() {
           bloc.add(AddCondition(property: 'id', value: _mockItem1.id));
           await Future.delayed(Duration());
 
-          _sourceStreamController
-              .add(MockSourceBlocClassItems([_mockItem1, _mockItem2]));
+          bloc.add(AddCondition(
+            property: 'id',
+            value: _mockItem3.id,
+            mode: FilterMode.and,
+          ));
+          await Future.delayed(Duration());
+
+          _sourceStreamController.add(MockSourceBlocClassItems([
+            _mockItem1,
+            _mockItem2,
+            _mockItem3,
+          ]));
           await Future.delayed(Duration());
 
           _sourceStreamController.add(MockSourceBlocClassItems([_mockItem2]));
@@ -227,14 +243,16 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id],
               'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', _mockItem1.id),
             },
             availableConditions: {
@@ -243,16 +261,40 @@ void main() {
             },
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {
+              generateConditionKey('id', _mockItem3.id),
+            },
+            activeOrConditions: {
               generateConditionKey('id', _mockItem1.id),
             },
             availableConditions: {
-              'id': [_mockItem1.id, _mockItem2.id],
-              'extra': [_mockItem1.extra, _mockItem2.extra],
+              'id': [_mockItem1.id],
+              'extra': [_mockItem1.extra],
             },
           ),
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {
+              generateConditionKey('id', _mockItem3.id),
+            },
+            activeOrConditions: {
+              generateConditionKey('id', _mockItem1.id),
+            },
+            availableConditions: {
+              'id': [
+                _mockItem1.id,
+                _mockItem2.id,
+                _mockItem3.id,
+              ],
+              'extra': [
+                _mockItem1.extra,
+                _mockItem2.extra,
+                _mockItem3.extra,
+              ],
+            },
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem2.id],
               'extra': [_mockItem2.extra],
@@ -277,7 +319,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id],
               'extra': [_mockItem1.extra, _mockItem2.extra],
@@ -302,7 +345,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
               'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
@@ -327,7 +371,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'conditional': [
                 'True',
@@ -353,7 +398,8 @@ void main() {
         },
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {
               'conditional': [
                 'True',
@@ -383,7 +429,8 @@ void main() {
           filterProperties: [],
         )..emit(ConditionsInitialized(
             availableConditions: {},
-            activeConditions: {},
+            activeOrConditions: {},
+            activeAndConditions: {},
           )),
         act: (bloc) => bloc
           ..add(AddCondition(property: 'id', value: '123'))
@@ -398,20 +445,23 @@ void main() {
           ..add(RemoveCondition(property: 'extra', value: 'something')),
         expect: [
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '123'),
             },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '123'),
               generateConditionKey('extra', 'something'),
             },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '123'),
               generateConditionKey('extra', 'something'),
               generateConditionKey('conditional', 'True'),
@@ -419,7 +469,8 @@ void main() {
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '123'),
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
@@ -428,7 +479,8 @@ void main() {
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '123'),
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
@@ -439,7 +491,8 @@ void main() {
           ),
           // Conditions start to be removed.
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
               generateConditionKey('conditional', 'True'),
@@ -448,7 +501,8 @@ void main() {
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('id', '456'),
               generateConditionKey('extra', 'something'),
               generateConditionKey('conditional', 'True'),
@@ -456,24 +510,163 @@ void main() {
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('extra', 'something'),
               generateConditionKey('conditional', 'True'),
             },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{
+            activeAndConditions: {},
+            activeOrConditions: {
               generateConditionKey('extra', 'something'),
             },
             availableConditions: {},
           ),
           ConditionsInitialized(
-            activeConditions: <String>{},
+            activeAndConditions: {},
+            activeOrConditions: {},
             availableConditions: {},
           ),
         ],
       );
+
+      blocTest<FilterConditionsBloc, FilterConditionsState>(
+        'adds and removes active conditions across filter modes',
+        build: () => FilterConditionsBloc<MockSourceBlocClassItems>(
+          sourceBloc: _sourceBloc,
+          filterProperties: [],
+        )..emit(ConditionsInitialized(
+            activeAndConditions: {},
+            activeOrConditions: {},
+            availableConditions: {},
+          )),
+        act: (bloc) => bloc
+          ..add(AddCondition(property: 'id', value: '123'))
+          ..add(AddCondition(
+            property: 'id',
+            value: '123',
+            mode: FilterMode.and,
+          ))
+          ..add(AddCondition(
+            property: 'extra',
+            value: 'something',
+            mode: FilterMode.and,
+          ))
+          ..add(AddCondition(property: 'extra', value: 'something'))
+          ..add(RemoveCondition(property: 'extra', value: 'something'))
+          ..add(RemoveCondition(property: 'id', value: '123')),
+        expect: [
+          ConditionsInitialized(
+            activeAndConditions: {},
+            activeOrConditions: {
+              generateConditionKey('id', '123'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {
+              generateConditionKey('id', '123'),
+            },
+            activeOrConditions: {},
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {
+              generateConditionKey('id', '123'),
+              generateConditionKey('extra', 'something'),
+            },
+            activeOrConditions: {},
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {
+              generateConditionKey('id', '123'),
+            },
+            activeOrConditions: {
+              generateConditionKey('extra', 'something'),
+            },
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {
+              generateConditionKey('id', '123'),
+            },
+            activeOrConditions: {},
+            availableConditions: {},
+          ),
+          ConditionsInitialized(
+            activeAndConditions: {},
+            activeOrConditions: {},
+            availableConditions: {},
+          ),
+        ],
+      );
+    });
+
+    test('returns whether a condition is active or not', () async {
+      final bloc = FilterConditionsBloc(
+        sourceBloc: _sourceBloc,
+        filterProperties: [],
+      )..emit(ConditionsInitialized(
+          activeAndConditions: {},
+          activeOrConditions: {},
+          availableConditions: {},
+        ));
+
+      expect(bloc.isConditionActive('nothing', 'here'), false);
+
+      bloc.add(AddCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), true);
+
+      bloc.add(AddCondition(
+        property: 'extra',
+        value: 'something',
+        mode: FilterMode.and,
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('extra', 'something'), true);
+
+      bloc.add(RemoveCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), false);
+
+      bloc.add(RemoveCondition(
+        property: 'extra',
+        value: 'something',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('extra', 'something'), false);
+    });
+
+    test('keeps active conditions up to date if the source changes', () async {
+      final bloc = FilterConditionsBloc(
+        sourceBloc: _sourceBloc,
+        filterProperties: [],
+      )..emit(ConditionsInitialized(
+          activeAndConditions: {},
+          activeOrConditions: {},
+          availableConditions: {},
+        ));
+
+      bloc.add(AddCondition(
+        property: 'id',
+        value: '123',
+      ));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), true);
+
+      _sourceStreamController.add(MockSourceBlocClassItems([]));
+      await Future.delayed(Duration());
+      expect(bloc.isConditionActive('id', '123'), false);
     });
 
     test('closes the source bloc subscription', () {

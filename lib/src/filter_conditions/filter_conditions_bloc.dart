@@ -10,6 +10,15 @@ import '../utils.dart';
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
 
+/// Available filter modes that can be attached to a condition key.
+enum FilterMode {
+  /// Designates a condition to be filtered subtractively.
+  and,
+
+  /// Designates a condition to be filtered additively (the default).
+  or,
+}
+
 /// {@template filterconditionsbloc}
 /// Attaches to the provided [_sourceBloc] in order to dynamically generate
 /// groupings of available conditions that correspond to the
@@ -28,6 +37,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
   final Bloc _sourceBloc;
 
   StreamSubscription _sourceSubscription;
+  final Map<String, FilterMode> _conditionKeyTracker = {};
 
   /// {@macro filterconditionsbloc}
   FilterConditionsBloc({
@@ -80,8 +90,11 @@ class FilterConditionsBloc<T extends ItemSourceState>
       }
 
       final currentState = state;
-      final activeConditions = currentState is ConditionsInitialized
-          ? currentState.activeConditions
+      final activeAndConditions = currentState is ConditionsInitialized
+          ? currentState.activeAndConditions
+          : <String>{};
+      final activeOrConditions = currentState is ConditionsInitialized
+          ? currentState.activeOrConditions
           : <String>{};
 
       for (final property in modifiedFilterConditions) {
@@ -91,8 +104,14 @@ class FilterConditionsBloc<T extends ItemSourceState>
             availableConditions[property].toSet().toList()..sort();
       }
 
+      _conditionKeyTracker
+          .removeWhere((key, _) => !availableConditionKeys.contains(key));
+
       add(RefreshConditions(
-        activeConditions: activeConditions.intersection(availableConditionKeys),
+        activeAndConditions:
+            activeAndConditions.intersection(availableConditionKeys),
+        activeOrConditions:
+            activeOrConditions.intersection(availableConditionKeys),
         availableConditions: availableConditions,
       ));
     });
@@ -104,7 +123,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
   ) async* {
     if (event is RefreshConditions) {
       yield ConditionsInitialized(
-        activeConditions: event.activeConditions,
+        activeAndConditions: event.activeAndConditions,
+        activeOrConditions: event.activeOrConditions,
         availableConditions: event.availableConditions,
       );
     } else if (event is AddCondition) {
@@ -123,16 +143,34 @@ class FilterConditionsBloc<T extends ItemSourceState>
 
     final currentState = (state as ConditionsInitialized);
     final conditionKey = generateConditionKey(event.property, event.value);
+    final conditionMode = _conditionKeyTracker[conditionKey];
+    final doModesMatch = event.mode == conditionMode;
 
-    if (currentState.activeConditions.contains(conditionKey)) {
+    if (doModesMatch) {
       return currentState;
     }
 
-    final activeConditions = Set<String>.from(currentState.activeConditions);
-    activeConditions.add(conditionKey);
+    final activeAndConditions =
+        Set<String>.from(currentState.activeAndConditions);
+    final activeOrConditions =
+        Set<String>.from(currentState.activeOrConditions);
 
+    switch (event.mode) {
+      case FilterMode.and:
+        activeAndConditions.add(conditionKey);
+        activeOrConditions.remove(conditionKey);
+        break;
+
+      case FilterMode.or:
+        activeAndConditions.remove(conditionKey);
+        activeOrConditions.add(conditionKey);
+        break;
+    }
+
+    _conditionKeyTracker[conditionKey] = event.mode;
     return ConditionsInitialized(
-      activeConditions: activeConditions,
+      activeAndConditions: activeAndConditions,
+      activeOrConditions: activeOrConditions,
       availableConditions: currentState.availableConditions,
     );
   }
@@ -146,16 +184,31 @@ class FilterConditionsBloc<T extends ItemSourceState>
 
     final currentState = (state as ConditionsInitialized);
     final conditionKey = generateConditionKey(event.property, event.value);
+    final conditionMode = _conditionKeyTracker[conditionKey];
 
-    if (!currentState.activeConditions.contains(conditionKey)) {
+    if (conditionMode == null) {
       return currentState;
     }
 
-    final activeConditions = Set<String>.from(currentState.activeConditions);
-    activeConditions.remove(conditionKey);
+    var activeAndConditions = currentState.activeAndConditions;
+    var activeOrConditions = currentState.activeOrConditions;
 
+    switch (conditionMode) {
+      case FilterMode.and:
+        activeAndConditions = Set<String>.from(activeAndConditions);
+        activeAndConditions.remove(conditionKey);
+        break;
+
+      case FilterMode.or:
+        activeOrConditions = Set<String>.from(activeOrConditions);
+        activeOrConditions.remove(conditionKey);
+        break;
+    }
+
+    _conditionKeyTracker.remove(conditionKey);
     return ConditionsInitialized(
-      activeConditions: activeConditions,
+      activeAndConditions: activeAndConditions,
+      activeOrConditions: activeOrConditions,
       availableConditions: currentState.availableConditions,
     );
   }
@@ -171,12 +224,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
   /// Helper that checks whether a [value] for a given [property] exists in
   /// the current state as an active condition.
   bool isConditionActive(String property, String value) {
-    final currentState = state;
     final conditionKey = generateConditionKey(property, value);
-
-    return currentState is ConditionsInitialized
-        ? currentState.activeConditions.contains(conditionKey)
-        : false;
+    return _conditionKeyTracker.containsKey(conditionKey);
   }
 
   @override
