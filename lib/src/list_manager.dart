@@ -69,13 +69,15 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
   final B sourceBloc;
 
   /// {@macro listmanager}
-  ListManager({
+  const ListManager({
     @required this.child,
     @required this.filterProperties,
     this.searchProperties,
     this.sourceBloc,
+    Key key,
   })  : assert(child != null),
-        assert(filterProperties != null);
+        assert(filterProperties != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

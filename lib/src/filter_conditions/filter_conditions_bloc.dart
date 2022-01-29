@@ -10,15 +10,6 @@ import '../utils.dart';
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
 
-/// Available filter modes that can be attached to a condition key.
-enum FilterMode {
-  /// Designates a condition to be filtered subtractively.
-  and,
-
-  /// Designates a condition to be filtered additively (the default).
-  or,
-}
-
 /// {@template filterconditionsbloc}
 /// Attaches to the provided [_sourceBloc] in order to dynamically generate
 /// groupings of available conditions that correspond to the
@@ -47,7 +38,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
         assert(sourceBloc != null),
         _filterProperties = filterProperties,
         _sourceBloc = sourceBloc,
-        super(ConditionsUninitialized()) {
+        super(const ConditionsUninitialized()) {
     _sourceSubscription = _sourceBloc.stream.listen((sourceState) {
       if (sourceState is! T) {
         return;
@@ -128,6 +119,19 @@ class FilterConditionsBloc<T extends ItemSourceState>
         (event, emit) => emit(_removeConditionFromActiveConditions(event)));
   }
 
+  @override
+  Future<void> close() async {
+    await _sourceSubscription?.cancel();
+    return super.close();
+  }
+
+  /// Helper that checks whether a [value] for a given [property] exists in
+  /// the current state as an active condition.
+  bool isConditionActive(String property, String value) {
+    final conditionKey = generateConditionKey(property, value);
+    return _conditionKeyTracker.containsKey(conditionKey);
+  }
+
   FilterConditionsState _addConditionToActiveConditions(
     AddCondition event,
   ) {
@@ -169,6 +173,10 @@ class FilterConditionsBloc<T extends ItemSourceState>
     );
   }
 
+  Map<String, List<String>> _generateFilterPropertiesMap() {
+    return { for (var item in _filterProperties) item : [] };
+  }
+
   FilterConditionsState _removeConditionFromActiveConditions(
     RemoveCondition event,
   ) {
@@ -206,25 +214,13 @@ class FilterConditionsBloc<T extends ItemSourceState>
       availableConditions: currentState.availableConditions,
     );
   }
+}
 
-  Map<String, List<String>> _generateFilterPropertiesMap() {
-    return Map.fromIterable(
-      _filterProperties,
-      key: (item) => item,
-      value: (_) => [],
-    );
-  }
+/// Available filter modes that can be attached to a condition key.
+enum FilterMode {
+  /// Designates a condition to be filtered subtractively.
+  and,
 
-  /// Helper that checks whether a [value] for a given [property] exists in
-  /// the current state as an active condition.
-  bool isConditionActive(String property, String value) {
-    final conditionKey = generateConditionKey(property, value);
-    return _conditionKeyTracker.containsKey(conditionKey);
-  }
-
-  @override
-  Future<void> close() async {
-    await _sourceSubscription?.cancel();
-    return super.close();
-  }
+  /// Designates a condition to be filtered additively (the default).
+  or,
 }

@@ -11,10 +11,6 @@ import '../utils.dart';
 
 part 'item_list_state.dart';
 
-class _ExternalDataUpdated extends _ItemListEvent {}
-
-abstract class _ItemListEvent {}
-
 /// {@template itemlistbloc}
 /// Attaches to the provided [_filterConditionsBloc], [_searchQueryCubit],
 /// and [_sourceBloc] and uses supplied [_searchProperties]
@@ -53,7 +49,7 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
         _searchQueryCubit = searchQueryCubit,
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties,
-        super(NoSourceItems()) {
+        super(const NoSourceItems()) {
     _filterConditionsSubscription = _filterConditionsBloc.stream.listen((_) {
       add(_ExternalDataUpdated());
     });
@@ -69,7 +65,7 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
     on<_ExternalDataUpdated>((event, emit) {
       if (_filterConditionsBloc.state is! ConditionsInitialized ||
           _sourceBloc.state is! T) {
-        return emit(NoSourceItems());
+        return emit(const NoSourceItems());
       }
 
       final items = (_sourceBloc.state as T).items;
@@ -78,9 +74,32 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
           _searchSource(_searchQueryCubit.state, filterResults);
 
       return emit(searchResults.isEmpty
-          ? ItemEmptyState()
+          ? const ItemEmptyState()
           : ItemResults(searchResults.toList()));
     });
+  }
+
+  @override
+  Future<void> close() async {
+    await _filterConditionsSubscription?.cancel();
+    await _searchQuerySubscription?.cancel();
+    await _sourceSubscription?.cancel();
+
+    return super.close();
+  }
+
+  bool _evaluateFilterCondition(I item, String conditionKey) {
+    final parsedConditionKey = splitConditionKey(conditionKey);
+
+    final property = parsedConditionKey[0];
+    final itemValue = item[property];
+    final targetValue = parsedConditionKey[1];
+
+    if (itemValue is bool) {
+      return itemValue.toString() == targetValue.toLowerCase();
+    }
+
+    return itemValue == targetValue;
   }
 
   Iterable<I> _filterSource(List<I> items) {
@@ -125,27 +144,8 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
               : false;
         }));
   }
-
-  bool _evaluateFilterCondition(I item, String conditionKey) {
-    final parsedConditionKey = splitConditionKey(conditionKey);
-
-    final property = parsedConditionKey[0];
-    final itemValue = item[property];
-    final targetValue = parsedConditionKey[1];
-
-    if (itemValue is bool) {
-      return itemValue.toString() == targetValue.toLowerCase();
-    }
-
-    return itemValue == targetValue;
-  }
-
-  @override
-  Future<void> close() async {
-    await _filterConditionsSubscription?.cancel();
-    await _searchQuerySubscription?.cancel();
-    await _sourceSubscription?.cancel();
-
-    return super.close();
-  }
 }
+
+class _ExternalDataUpdated extends _ItemListEvent {}
+
+abstract class _ItemListEvent {}

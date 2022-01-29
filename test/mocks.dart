@@ -3,22 +3,6 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 
-class MockSourceBloc extends MockBloc<MockSourceBlocEvent, MockSourceBlocState>
-    implements Bloc<MockSourceBlocEvent, MockSourceBlocState> {}
-
-class MockSourceBlocEvent {}
-
-abstract class MockSourceBlocState extends Equatable {
-  const MockSourceBlocState();
-}
-
-class MockSourceBlocNoItems extends MockSourceBlocState {
-  const MockSourceBlocNoItems();
-
-  @override
-  List<Object> get props => ['No Items'];
-}
-
 class MockItemClass extends Equatable implements ItemClassWithAccessor {
   final String id;
   final String name;
@@ -34,6 +18,10 @@ class MockItemClass extends Equatable implements ItemClassWithAccessor {
     this.conditional,
   });
 
+  @override
+  List<Object> get props => [id, name, extra, common, conditional];
+
+  @override
   dynamic operator [](String prop) {
     switch (prop) {
       case 'id':
@@ -57,17 +45,31 @@ class MockItemClass extends Equatable implements ItemClassWithAccessor {
         );
     }
   }
-
-  @override
-  List<Object> get props => [id, name, extra, common, conditional];
 }
+
+class MockSourceBloc extends MockBloc<MockSourceBlocEvent, MockSourceBlocState>
+    implements Bloc<MockSourceBlocEvent, MockSourceBlocState> {}
 
 class MockSourceBlocClassItems extends MockSourceBlocState
     implements ItemSourceState<MockItemClass> {
+  @override
   final List<MockItemClass> items;
 
   const MockSourceBlocClassItems(this.items);
 
   @override
   List<Object> get props => [items];
+}
+
+class MockSourceBlocEvent {}
+
+class MockSourceBlocNoItems extends MockSourceBlocState {
+  const MockSourceBlocNoItems();
+
+  @override
+  List<Object> get props => ['No Items'];
+}
+
+abstract class MockSourceBlocState extends Equatable {
+  const MockSourceBlocState();
 }

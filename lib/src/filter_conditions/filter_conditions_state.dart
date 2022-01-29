@@ -1,26 +1,5 @@
 part of 'filter_conditions_bloc.dart';
 
-/// {@template filterconditionsstate}
-/// Base [FilterConditionsState] for extension.
-/// {@endtemplate}
-abstract class FilterConditionsState extends Equatable {
-  /// {@macro filterconditionsstate}
-  const FilterConditionsState();
-}
-
-/// {@template conditionsuninitialized}
-/// State when available conditions have yet to be generated.
-/// This will generally happen if the source bloc has not yet
-/// emitted a state containing items to process.
-/// {@endtemplate}
-class ConditionsUninitialized extends FilterConditionsState {
-  /// {@macro conditionsuninitialized}
-  const ConditionsUninitialized();
-
-  @override
-  List<Object> get props => ['Uninitialized'];
-}
-
 /// {@template conditionsinitialized}
 /// {@endtemplate}
 class ConditionsInitialized extends FilterConditionsState {
@@ -56,4 +35,25 @@ class ConditionsInitialized extends FilterConditionsState {
         activeAndConditions,
         activeOrConditions,
       ];
+}
+
+/// {@template conditionsuninitialized}
+/// State when available conditions have yet to be generated.
+/// This will generally happen if the source bloc has not yet
+/// emitted a state containing items to process.
+/// {@endtemplate}
+class ConditionsUninitialized extends FilterConditionsState {
+  /// {@macro conditionsuninitialized}
+  const ConditionsUninitialized();
+
+  @override
+  List<Object> get props => ['Uninitialized'];
+}
+
+/// {@template filterconditionsstate}
+/// Base [FilterConditionsState] for extension.
+/// {@endtemplate}
+abstract class FilterConditionsState extends Equatable {
+  /// {@macro filterconditionsstate}
+  const FilterConditionsState();
 }
