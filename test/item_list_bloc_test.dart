@@ -1,15 +1,15 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 import 'package:flutter_bloc_list_manager/src/utils.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import './mocks.dart';
 
-class MockFilterConditionsBloc extends MockBloc<FilterConditionsState>
+class MockFilterConditionsBloc
+    extends MockBloc<FilterConditionsEvent, FilterConditionsState>
     implements FilterConditionsBloc {}
 
-class MockSearchQueryCubit extends MockBloc<String>
+class MockSearchQueryCubit extends MockCubit<String>
     implements SearchQueryCubit {}
 
 void main() {
@@ -46,6 +46,12 @@ void main() {
       _sourceBloc = MockSourceBloc();
     });
 
+    tearDown(() {
+      _filterConditionsBloc.close();
+      _searchQueryCubit.close();
+      _sourceBloc.close();
+    });
+
     test('sets an initial state', () {
       final bloc = ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
         filterConditionsBloc: _filterConditionsBloc,
@@ -71,7 +77,7 @@ void main() {
         );
       },
       skip: 1,
-      expect: [],
+      expect: () => [],
     );
 
     blocTest<ItemListBloc, ItemListState>(
@@ -96,7 +102,7 @@ void main() {
         );
       },
       skip: 1,
-      expect: [],
+      expect: () => [],
     );
 
     blocTest<ItemListBloc, ItemListState>(
@@ -124,7 +130,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1]),
       ],
     );
@@ -158,7 +164,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemEmptyState(),
       ],
     );
@@ -193,7 +199,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1, _mockItem3]),
       ],
     );
@@ -229,7 +235,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemEmptyState(),
       ],
     );
@@ -264,7 +270,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1]),
       ],
     );
@@ -301,7 +307,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1]),
       ],
     );
@@ -335,7 +341,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1, _mockItem3]),
       ],
     );
@@ -370,7 +376,7 @@ void main() {
           sourceBloc: _sourceBloc,
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem1, _mockItem3]),
       ],
     );
@@ -403,7 +409,7 @@ void main() {
           searchProperties: ['extra'],
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem2]),
       ],
     );
@@ -440,7 +446,7 @@ void main() {
           searchProperties: ['extra'],
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem2]),
       ],
     );
@@ -480,7 +486,7 @@ void main() {
           searchProperties: ['extra'],
         );
       },
-      expect: [
+      expect: () => [
         ItemResults([_mockItem2]),
       ],
     );
@@ -517,7 +523,7 @@ void main() {
           searchProperties: ['extra'],
         );
       },
-      expect: [
+      expect: () => [
         ItemEmptyState(),
       ],
     );

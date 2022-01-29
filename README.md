@@ -101,12 +101,12 @@ Events can be dispatched against the `FilterConditionsBloc` to add/remove active
 _Example_
 
 ```dart
-context.bloc<FilterConditionsBloc>().add(AddCondition(
+context.read<FilterConditionsBloc>().add(AddCondition(
   property: 'property',
   value: 'value',
 ));
 
-context.bloc<FilterConditionsBloc>().add(RemoveCondition(
+context.read<FilterConditionsBloc>().add(RemoveCondition(
   property: 'property',
   value: 'value',
 ));
@@ -121,7 +121,7 @@ You can choose to override the default filter mode when adding a specific condit
 _Example_
 
 ```dart
-context.bloc<FilterConditionsBloc>().add(AddCondition(
+context.read<FilterConditionsBloc>().add(AddCondition(
   property: 'property',
   value: 'value',
   mode: FilterMode.and,
@@ -135,8 +135,8 @@ The simplest cubit of the bunch, the `SearchQueryCubit` is solely responsible fo
 _Example_
 
 ```dart
-context.bloc<SearchQueryCubit>().setQuery('query');
-context.bloc<SearchQueryCubit>().clearQuery();
+context.read<SearchQueryCubit>().setQuery('query');
+context.read<SearchQueryCubit>().clearQuery();
 ```
 
 ### ItemListBloc

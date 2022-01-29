@@ -48,7 +48,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
         _filterProperties = filterProperties,
         _sourceBloc = sourceBloc,
         super(ConditionsUninitialized()) {
-    _sourceSubscription = _sourceBloc.listen((sourceState) {
+    _sourceSubscription = _sourceBloc.stream.listen((sourceState) {
       if (sourceState is! T) {
         return;
       }
@@ -115,23 +115,17 @@ class FilterConditionsBloc<T extends ItemSourceState>
         availableConditions: availableConditions,
       ));
     });
-  }
 
-  @override
-  Stream<FilterConditionsState> mapEventToState(
-    FilterConditionsEvent event,
-  ) async* {
-    if (event is RefreshConditions) {
-      yield ConditionsInitialized(
-        activeAndConditions: event.activeAndConditions,
-        activeOrConditions: event.activeOrConditions,
-        availableConditions: event.availableConditions,
-      );
-    } else if (event is AddCondition) {
-      yield _addConditionToActiveConditions(event);
-    } else if (event is RemoveCondition) {
-      yield _removeConditionFromActiveConditions(event);
-    }
+    on<RefreshConditions>((event, emit) => emit(ConditionsInitialized(
+          activeAndConditions: event.activeAndConditions,
+          activeOrConditions: event.activeOrConditions,
+          availableConditions: event.availableConditions,
+        )));
+
+    on<AddCondition>(
+        (event, emit) => emit(_addConditionToActiveConditions(event)));
+    on<RemoveCondition>(
+        (event, emit) => emit(_removeConditionFromActiveConditions(event)));
   }
 
   FilterConditionsState _addConditionToActiveConditions(

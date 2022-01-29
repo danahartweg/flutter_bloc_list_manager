@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'package:mockito/mockito.dart';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 import 'package:flutter_bloc_list_manager/src/utils.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import './mocks.dart';
 
@@ -37,13 +35,11 @@ void main() {
       _sourceBloc = MockSourceBloc();
       _sourceStreamController = StreamController();
 
-      when(_sourceBloc.listen(any)).thenAnswer((invocation) {
-        return _sourceStreamController.stream.listen(invocation
-            .positionalArguments.first as Function(MockSourceBlocState));
-      });
+      whenListen(_sourceBloc, _sourceStreamController.stream);
     });
 
     tearDown(() {
+      _sourceBloc.close();
       _sourceStreamController.close();
     });
 
@@ -68,7 +64,7 @@ void main() {
             filterProperties: [],
           );
         },
-        expect: [],
+        expect: () => [],
       );
 
       blocTest<FilterConditionsBloc, FilterConditionsState>(
@@ -84,7 +80,7 @@ void main() {
             filterProperties: [],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -106,7 +102,7 @@ void main() {
             filterProperties: ['id', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -137,7 +133,7 @@ void main() {
             filterProperties: ['name', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -163,7 +159,7 @@ void main() {
             filterProperties: ['id', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -191,7 +187,7 @@ void main() {
             filterProperties: ['id', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -241,7 +237,7 @@ void main() {
           _sourceStreamController.add(MockSourceBlocClassItems([_mockItem2]));
           await Future.delayed(Duration());
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -317,7 +313,7 @@ void main() {
             filterProperties: ['id', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -343,7 +339,7 @@ void main() {
             filterProperties: ['id', 'extra'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -369,7 +365,7 @@ void main() {
             filterProperties: ['conditional'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -396,7 +392,7 @@ void main() {
             filterProperties: ['conditional'],
           );
         },
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {},
@@ -419,7 +415,7 @@ void main() {
           filterProperties: [],
         ),
         act: (bloc) => bloc.add(AddCondition(property: 'id', value: '123')),
-        expect: [ConditionsUninitialized()],
+        expect: () => [ConditionsUninitialized()],
       );
 
       blocTest<FilterConditionsBloc, FilterConditionsState>(
@@ -443,7 +439,7 @@ void main() {
           ..add(RemoveCondition(property: 'id', value: '456'))
           ..add(RemoveCondition(property: 'conditional', value: 'True'))
           ..add(RemoveCondition(property: 'extra', value: 'something')),
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {
@@ -557,7 +553,7 @@ void main() {
           ..add(AddCondition(property: 'extra', value: 'something'))
           ..add(RemoveCondition(property: 'extra', value: 'something'))
           ..add(RemoveCondition(property: 'id', value: '123')),
-        expect: [
+        expect: () => [
           ConditionsInitialized(
             activeAndConditions: {},
             activeOrConditions: {

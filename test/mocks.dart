@@ -1,11 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:equatable/equatable.dart';
-
 import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
 
-class MockSourceBloc extends MockBloc<MockSourceBlocState>
-    implements Bloc<ItemSourceState, MockSourceBlocState> {}
+class MockSourceBloc extends MockBloc<MockSourceBlocEvent, MockSourceBlocState>
+    implements Bloc<MockSourceBlocEvent, MockSourceBlocState> {}
+
+class MockSourceBlocEvent {}
 
 abstract class MockSourceBlocState extends Equatable {
   const MockSourceBlocState();

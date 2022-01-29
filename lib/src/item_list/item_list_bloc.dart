@@ -11,11 +11,9 @@ import '../utils.dart';
 
 part 'item_list_state.dart';
 
-enum _itemListEvent {
-  filterConditionsUpdated,
-  searchQueryUpdated,
-  sourceUpdated
-}
+class _ExternalDataUpdated extends _ItemListEvent {}
+
+abstract class _ItemListEvent {}
 
 /// {@template itemlistbloc}
 /// Attaches to the provided [_filterConditionsBloc], [_searchQueryCubit],
@@ -32,7 +30,7 @@ enum _itemListEvent {
 /// in order to render your list UI however you see fit.
 /// {@endtemplate}
 class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
-    extends Bloc<_itemListEvent, ItemListState> {
+    extends Bloc<_ItemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
   final SearchQueryCubit _searchQueryCubit;
   final Bloc _sourceBloc;
@@ -56,44 +54,33 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties,
         super(NoSourceItems()) {
-    _filterConditionsSubscription = _filterConditionsBloc.listen((_) {
-      add(_itemListEvent.filterConditionsUpdated);
+    _filterConditionsSubscription = _filterConditionsBloc.stream.listen((_) {
+      add(_ExternalDataUpdated());
     });
 
-    _searchQuerySubscription = _searchQueryCubit.listen((_) {
-      add(_itemListEvent.searchQueryUpdated);
+    _searchQuerySubscription = _searchQueryCubit.stream.listen((_) {
+      add(_ExternalDataUpdated());
     });
 
-    _sourceSubscription = _sourceBloc.listen((_) {
-      add(_itemListEvent.sourceUpdated);
+    _sourceSubscription = _sourceBloc.stream.listen((_) {
+      add(_ExternalDataUpdated());
     });
-  }
 
-  @override
-  Stream<ItemListState> mapEventToState(
-    _itemListEvent event,
-  ) async* {
-    if (_filterConditionsBloc.state is! ConditionsInitialized ||
-        _sourceBloc.state is! T) {
-      yield NoSourceItems();
-      return;
-    }
+    on<_ExternalDataUpdated>((event, emit) {
+      if (_filterConditionsBloc.state is! ConditionsInitialized ||
+          _sourceBloc.state is! T) {
+        return emit(NoSourceItems());
+      }
 
-    if (event != _itemListEvent.sourceUpdated &&
-        event != _itemListEvent.filterConditionsUpdated &&
-        event != _itemListEvent.searchQueryUpdated) {
-      return;
-    }
+      final items = (_sourceBloc.state as T).items;
+      final filterResults = _filterSource(items);
+      final searchResults =
+          _searchSource(_searchQueryCubit.state, filterResults);
 
-    final items = (_sourceBloc.state as T).items;
-    final filterResults = _filterSource(items);
-    final searchResults = _searchSource(_searchQueryCubit.state, filterResults);
-
-    if (searchResults.isEmpty) {
-      yield ItemEmptyState();
-    } else {
-      yield ItemResults(searchResults.toList());
-    }
+      return emit(searchResults.isEmpty
+          ? ItemEmptyState()
+          : ItemResults(searchResults.toList()));
+    });
   }
 
   Iterable<I> _filterSource(List<I> items) {

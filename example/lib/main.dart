@@ -184,7 +184,7 @@ class SearchInput extends StatelessWidget {
             ),
             textInputAction: TextInputAction.search,
             onChanged: (value) =>
-                context.bloc<SearchQueryCubit>().setQuery(value),
+                context.read<SearchQueryCubit>().setQuery(value),
           ),
         );
       },
@@ -203,7 +203,7 @@ class FilterConditionsLauncher extends StatelessWidget {
         showModalBottomSheet(
           context: context,
           builder: (_) => FilterConditionsSheet(
-            filterConditionsBloc: context.bloc<FilterConditionsBloc>(),
+            filterConditionsBloc: context.read<FilterConditionsBloc>(),
           ),
           elevation: 1,
         );
@@ -246,7 +246,7 @@ class FilterConditionsSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.3,
       child: BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
-        cubit: _filterConditionsBloc,
+        bloc: _filterConditionsBloc,
         builder: (_, state) {
           if (state is ConditionsInitialized) {
             // This could be further optimized by removing

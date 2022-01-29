@@ -1,7 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 
 import '../flutter_bloc_list_manager.dart';
 
@@ -81,7 +79,7 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
 
   @override
   Widget build(BuildContext context) {
-    final _sourceBloc = sourceBloc ?? context.bloc<B>();
+    final _sourceBloc = sourceBloc ?? context.read<B>();
 
     return MultiBlocProvider(
       providers: [
@@ -97,8 +95,8 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
         BlocProvider<ItemListBloc>(
           create: (context) => ItemListBloc<I, T>(
             sourceBloc: _sourceBloc,
-            filterConditionsBloc: context.bloc<FilterConditionsBloc>(),
-            searchQueryCubit: context.bloc<SearchQueryCubit>(),
+            filterConditionsBloc: context.read<FilterConditionsBloc>(),
+            searchQueryCubit: context.read<SearchQueryCubit>(),
             searchProperties: searchProperties,
           ),
         )
