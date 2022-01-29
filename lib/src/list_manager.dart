@@ -1,7 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 
 import '../flutter_bloc_list_manager.dart';
 
@@ -58,6 +56,10 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
   /// of the blocs created by this widget to manage your list.
   final Widget child;
 
+  /// [Bloc] that will contain an [ItemSourceState]. If one is not provided
+  /// the current [BuildContext] will be used to look it up.
+  final B? sourceBloc;
+
   /// A [List] of property keys that should be used
   /// by the [FilterConditionsBloc] when generating available conditions.
   final List<String> filterProperties;
@@ -66,22 +68,18 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
   /// by the [ItemListBloc] while searching against the active query.
   final List<String> searchProperties;
 
-  /// [Bloc] that will contain an [ItemSourceState]. If one is not provided
-  /// the current [BuildContext] will be used to look it up.
-  final B sourceBloc;
-
   /// {@macro listmanager}
-  ListManager({
-    @required this.child,
-    @required this.filterProperties,
-    this.searchProperties,
+  const ListManager({
+    required this.child,
     this.sourceBloc,
-  })  : assert(child != null),
-        assert(filterProperties != null);
+    this.filterProperties = const [],
+    this.searchProperties = const [],
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final _sourceBloc = sourceBloc ?? context.bloc<B>();
+    final _sourceBloc = sourceBloc ?? context.read<B>();
 
     return MultiBlocProvider(
       providers: [
@@ -97,8 +95,8 @@ class ListManager<I extends ItemClassWithAccessor, T extends ItemSourceState,
         BlocProvider<ItemListBloc>(
           create: (context) => ItemListBloc<I, T>(
             sourceBloc: _sourceBloc,
-            filterConditionsBloc: context.bloc<FilterConditionsBloc>(),
-            searchQueryCubit: context.bloc<SearchQueryCubit>(),
+            filterConditionsBloc: context.read<FilterConditionsBloc>(),
+            searchQueryCubit: context.read<SearchQueryCubit>(),
             searchProperties: searchProperties,
           ),
         )

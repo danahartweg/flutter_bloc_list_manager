@@ -1,5 +1,31 @@
 part of 'filter_conditions_bloc.dart';
 
+/// {@template addcondition}
+/// Dispatched to add the requested [property] [value] pair to the list
+/// of conditions that are currently active.
+/// {@endtemplate}
+class AddCondition extends FilterConditionsEvent {
+  /// The [property] identifier containing the [value],
+  /// matching a filter property supplied to the `FilterConditionsBloc`.
+  final String property;
+
+  /// The value to be added.
+  final String value;
+
+  /// The filter mode to use for this condition.
+  final FilterMode mode;
+
+  /// {@macro addcondition}
+  const AddCondition({
+    required this.property,
+    required this.value,
+    this.mode = FilterMode.or,
+  });
+
+  @override
+  List<Object> get props => [property, value, mode];
+}
+
 /// {@template filterconditionsevent}
 /// Base [FilterConditionsEvent] for extension.
 /// {@endtemplate}
@@ -31,9 +57,9 @@ class RefreshConditions extends FilterConditionsEvent {
 
   /// {@macro refreshconditions}
   const RefreshConditions({
-    @required this.availableConditions,
-    @required this.activeAndConditions,
-    @required this.activeOrConditions,
+    required this.availableConditions,
+    required this.activeAndConditions,
+    required this.activeOrConditions,
   });
 
   @override
@@ -42,32 +68,6 @@ class RefreshConditions extends FilterConditionsEvent {
         activeAndConditions,
         activeOrConditions,
       ];
-}
-
-/// {@template addcondition}
-/// Dispatched to add the requested [property] [value] pair to the list
-/// of conditions that are currently active.
-/// {@endtemplate}
-class AddCondition extends FilterConditionsEvent {
-  /// The [property] identifier containing the [value],
-  /// matching a filter property supplied to the `FilterConditionsBloc`.
-  final String property;
-
-  /// The value to be added.
-  final String value;
-
-  /// The filter mode to use for this condition.
-  final FilterMode mode;
-
-  /// {@macro addcondition}
-  const AddCondition({
-    @required this.property,
-    @required this.value,
-    this.mode = FilterMode.or,
-  });
-
-  @override
-  List<Object> get props => [property, value, mode];
 }
 
 /// {@template removecondition}
@@ -84,8 +84,8 @@ class RemoveCondition extends FilterConditionsEvent {
 
   /// {@macro removecondition}
   const RemoveCondition({
-    @required this.property,
-    @required this.value,
+    required this.property,
+    required this.value,
   });
 
   @override

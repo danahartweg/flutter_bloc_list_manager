@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 import '../filter_conditions/filter_conditions_bloc.dart';
 import '../item_source.dart';
@@ -10,12 +9,6 @@ import '../search_query/search_query.dart';
 import '../utils.dart';
 
 part 'item_list_state.dart';
-
-enum _itemListEvent {
-  filterConditionsUpdated,
-  searchQueryUpdated,
-  sourceUpdated
-}
 
 /// {@template itemlistbloc}
 /// Attaches to the provided [_filterConditionsBloc], [_searchQueryCubit],
@@ -32,68 +25,76 @@ enum _itemListEvent {
 /// in order to render your list UI however you see fit.
 /// {@endtemplate}
 class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
-    extends Bloc<_itemListEvent, ItemListState> {
+    extends Bloc<_ItemListEvent, ItemListState> {
   final FilterConditionsBloc _filterConditionsBloc;
   final SearchQueryCubit _searchQueryCubit;
   final Bloc _sourceBloc;
   final List<String> _searchProperties;
 
-  StreamSubscription _filterConditionsSubscription;
-  StreamSubscription _searchQuerySubscription;
-  StreamSubscription _sourceSubscription;
+  late StreamSubscription _filterConditionsSubscription;
+  late StreamSubscription _searchQuerySubscription;
+  late StreamSubscription _sourceSubscription;
 
   /// {@macro itemlistbloc}
   ItemListBloc({
-    @required FilterConditionsBloc filterConditionsBloc,
-    @required SearchQueryCubit searchQueryCubit,
-    @required Bloc sourceBloc,
-    List<String> searchProperties,
-  })  : assert(filterConditionsBloc != null),
-        assert(searchQueryCubit != null),
-        assert(sourceBloc != null),
-        _filterConditionsBloc = filterConditionsBloc,
+    required FilterConditionsBloc filterConditionsBloc,
+    required SearchQueryCubit searchQueryCubit,
+    required Bloc sourceBloc,
+    List<String> searchProperties = const [],
+  })  : _filterConditionsBloc = filterConditionsBloc,
         _searchQueryCubit = searchQueryCubit,
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties,
-        super(NoSourceItems()) {
-    _filterConditionsSubscription = _filterConditionsBloc.listen((_) {
-      add(_itemListEvent.filterConditionsUpdated);
+        super(const NoSourceItems()) {
+    _filterConditionsSubscription = _filterConditionsBloc.stream.listen((_) {
+      add(_ExternalDataUpdated());
     });
 
-    _searchQuerySubscription = _searchQueryCubit.listen((_) {
-      add(_itemListEvent.searchQueryUpdated);
+    _searchQuerySubscription = _searchQueryCubit.stream.listen((_) {
+      add(_ExternalDataUpdated());
     });
 
-    _sourceSubscription = _sourceBloc.listen((_) {
-      add(_itemListEvent.sourceUpdated);
+    _sourceSubscription = _sourceBloc.stream.listen((_) {
+      add(_ExternalDataUpdated());
+    });
+
+    on<_ExternalDataUpdated>((event, emit) {
+      if (_filterConditionsBloc.state is! ConditionsInitialized ||
+          _sourceBloc.state is! T) {
+        return emit(const NoSourceItems());
+      }
+
+      final filterResults = _filterSource(_sourceBloc.state.items);
+      final searchResults =
+          _searchSource(_searchQueryCubit.state, filterResults);
+
+      return emit(searchResults.isEmpty
+          ? const ItemEmptyState()
+          : ItemResults(searchResults.toList()));
     });
   }
 
   @override
-  Stream<ItemListState> mapEventToState(
-    _itemListEvent event,
-  ) async* {
-    if (_filterConditionsBloc.state is! ConditionsInitialized ||
-        _sourceBloc.state is! T) {
-      yield NoSourceItems();
-      return;
+  Future<void> close() async {
+    await _filterConditionsSubscription.cancel();
+    await _searchQuerySubscription.cancel();
+    await _sourceSubscription.cancel();
+
+    return super.close();
+  }
+
+  bool _evaluateFilterCondition(I item, String conditionKey) {
+    final parsedConditionKey = splitConditionKey(conditionKey);
+
+    final property = parsedConditionKey[0];
+    final itemValue = item[property];
+    final targetValue = parsedConditionKey[1];
+
+    if (itemValue is bool) {
+      return itemValue.toString() == targetValue.toLowerCase();
     }
 
-    if (event != _itemListEvent.sourceUpdated &&
-        event != _itemListEvent.filterConditionsUpdated &&
-        event != _itemListEvent.searchQueryUpdated) {
-      return;
-    }
-
-    final items = (_sourceBloc.state as T).items;
-    final filterResults = _filterSource(items);
-    final searchResults = _searchSource(_searchQueryCubit.state, filterResults);
-
-    if (searchResults.isEmpty) {
-      yield ItemEmptyState();
-    } else {
-      yield ItemResults(searchResults.toList());
-    }
+    return itemValue == targetValue;
   }
 
   Iterable<I> _filterSource(List<I> items) {
@@ -138,27 +139,8 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
               : false;
         }));
   }
-
-  bool _evaluateFilterCondition(I item, String conditionKey) {
-    final parsedConditionKey = splitConditionKey(conditionKey);
-
-    final property = parsedConditionKey[0];
-    final itemValue = item[property];
-    final targetValue = parsedConditionKey[1];
-
-    if (itemValue is bool) {
-      return itemValue.toString() == targetValue.toLowerCase();
-    }
-
-    return itemValue == targetValue;
-  }
-
-  @override
-  Future<void> close() async {
-    await _filterConditionsSubscription?.cancel();
-    await _searchQuerySubscription?.cancel();
-    await _sourceSubscription?.cancel();
-
-    return super.close();
-  }
 }
+
+class _ExternalDataUpdated extends _ItemListEvent {}
+
+abstract class _ItemListEvent {}

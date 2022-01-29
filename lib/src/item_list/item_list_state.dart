@@ -1,26 +1,5 @@
 part of 'item_list_bloc.dart';
 
-/// {@template itemliststate}
-/// Base [FilterConditionsState] for extension.
-/// {@endtemplate}
-abstract class ItemListState extends Equatable {
-  /// {@macro itemliststate}
-  const ItemListState();
-}
-
-/// {@template nosourceitems}
-/// State corresponding to no items received from the source bloc.
-///
-/// This state should be used to present an empty state to the user.
-/// {@endtemplate}
-class NoSourceItems extends ItemListState {
-  /// {@macro nosourceitems}
-  const NoSourceItems();
-
-  @override
-  List<Object> get props => ['Empty Source'];
-}
-
 /// {@template itemsemptystate}
 /// State corresponding to no items matching
 /// the active conditions or search query.
@@ -33,6 +12,14 @@ class ItemEmptyState extends ItemListState {
 
   @override
   List<Object> get props => ['No Results'];
+}
+
+/// {@template itemliststate}
+/// Base [FilterConditionsState] for extension.
+/// {@endtemplate}
+abstract class ItemListState extends Equatable {
+  /// {@macro itemliststate}
+  const ItemListState();
 }
 
 /// {@template itemresults}
@@ -50,4 +37,17 @@ class ItemResults<I extends ItemClassWithAccessor> extends ItemListState {
 
   @override
   List<Object> get props => [items];
+}
+
+/// {@template nosourceitems}
+/// State corresponding to no items received from the source bloc.
+///
+/// This state should be used to present an empty state to the user.
+/// {@endtemplate}
+class NoSourceItems extends ItemListState {
+  /// {@macro nosourceitems}
+  const NoSourceItems();
+
+  @override
+  List<Object> get props => ['Empty Source'];
 }

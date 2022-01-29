@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_bloc_list_manager/flutter_bloc_list_manager.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('SearchQueryCubit', () {
@@ -18,14 +17,14 @@ void main() {
         ..setQuery('')
         ..setQuery('search2')
         ..clearQuery(),
-      expect: ['search1', '', 'search2', ''],
+      expect: () => ['search1', '', 'search2', ''],
     );
 
     blocTest<SearchQueryCubit, String>(
       'stores query state lowercase',
       build: () => SearchQueryCubit(),
       act: (cubit) => cubit.setQuery('ABC'),
-      expect: ['abc'],
+      expect: () => ['abc'],
     );
   });
 }

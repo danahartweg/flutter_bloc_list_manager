@@ -11,9 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: subosito/flutter-action@v1.3.2
+      - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "1.17.x"
+          flutter-version: "2.8.x"
           channel: "stable"
 
       - name: Parse local version
@@ -33,7 +33,7 @@ jobs:
       - name: Parse changelog
         if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
         id: changelog
-        uses: mindsers/changelog-reader-action@v1.3.1
+        uses: mindsers/changelog-reader-action@v2
         with:
           version: v${{ steps.local_version.outputs.version }}
           path: ./CHANGELOG.md
@@ -48,7 +48,7 @@ jobs:
         with:
           tag_name: v${{ steps.local_version.outputs.version }}
           release_name: v${{ steps.local_version.outputs.version }}
-          body: ${{ steps.changelog.outputs.log_entry }}
+          body: ${{ steps.changelog.outputs.changes }}
 
       - name: Publish
         if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}

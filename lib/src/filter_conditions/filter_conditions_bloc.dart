@@ -2,22 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 import '../item_source.dart';
 import '../utils.dart';
 
 part 'filter_conditions_event.dart';
 part 'filter_conditions_state.dart';
-
-/// Available filter modes that can be attached to a condition key.
-enum FilterMode {
-  /// Designates a condition to be filtered subtractively.
-  and,
-
-  /// Designates a condition to be filtered additively (the default).
-  or,
-}
 
 /// {@template filterconditionsbloc}
 /// Attaches to the provided [_sourceBloc] in order to dynamically generate
@@ -36,19 +26,17 @@ class FilterConditionsBloc<T extends ItemSourceState>
   final List<String> _filterProperties;
   final Bloc _sourceBloc;
 
-  StreamSubscription _sourceSubscription;
+  late StreamSubscription _sourceSubscription;
   final Map<String, FilterMode> _conditionKeyTracker = {};
 
   /// {@macro filterconditionsbloc}
   FilterConditionsBloc({
-    @required List<String> filterProperties,
-    @required Bloc sourceBloc,
-  })  : assert(filterProperties != null),
-        assert(sourceBloc != null),
-        _filterProperties = filterProperties,
+    required List<String> filterProperties,
+    required Bloc sourceBloc,
+  })  : _filterProperties = filterProperties,
         _sourceBloc = sourceBloc,
-        super(ConditionsUninitialized()) {
-    _sourceSubscription = _sourceBloc.listen((sourceState) {
+        super(const ConditionsUninitialized()) {
+    _sourceSubscription = _sourceBloc.stream.listen((sourceState) {
       if (sourceState is! T) {
         return;
       }
@@ -66,8 +54,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
           if (value is bool) {
             booleanProperties.add(property);
 
-            availableConditions[property].add('True');
-            availableConditions[property].add('False');
+            availableConditions[property]!.add('True');
+            availableConditions[property]!.add('False');
 
             availableConditionKeys.add(generateConditionKey(property, 'True'));
             availableConditionKeys.add(generateConditionKey(property, 'False'));
@@ -76,7 +64,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
           if (value is String && value.isNotEmpty) {
             final conditionKey = generateConditionKey(property, value);
 
-            availableConditions[property].add(value);
+            availableConditions[property]!.add(value);
             availableConditionKeys.add(conditionKey);
           }
         }
@@ -101,7 +89,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
         // Ensure only unique entries are present and that entries are sorted.
         // Removing duplicates before sorting will save a few cycles.
         availableConditions[property] =
-            availableConditions[property].toSet().toList()..sort();
+            availableConditions[property]!.toSet().toList()..sort();
       }
 
       _conditionKeyTracker
@@ -115,23 +103,30 @@ class FilterConditionsBloc<T extends ItemSourceState>
         availableConditions: availableConditions,
       ));
     });
+
+    on<RefreshConditions>((event, emit) => emit(ConditionsInitialized(
+          activeAndConditions: event.activeAndConditions,
+          activeOrConditions: event.activeOrConditions,
+          availableConditions: event.availableConditions,
+        )));
+
+    on<AddCondition>(
+        (event, emit) => emit(_addConditionToActiveConditions(event)));
+    on<RemoveCondition>(
+        (event, emit) => emit(_removeConditionFromActiveConditions(event)));
   }
 
   @override
-  Stream<FilterConditionsState> mapEventToState(
-    FilterConditionsEvent event,
-  ) async* {
-    if (event is RefreshConditions) {
-      yield ConditionsInitialized(
-        activeAndConditions: event.activeAndConditions,
-        activeOrConditions: event.activeOrConditions,
-        availableConditions: event.availableConditions,
-      );
-    } else if (event is AddCondition) {
-      yield _addConditionToActiveConditions(event);
-    } else if (event is RemoveCondition) {
-      yield _removeConditionFromActiveConditions(event);
-    }
+  Future<void> close() async {
+    await _sourceSubscription.cancel();
+    return super.close();
+  }
+
+  /// Helper that checks whether a [value] for a given [property] exists in
+  /// the current state as an active condition.
+  bool isConditionActive(String property, String value) {
+    final conditionKey = generateConditionKey(property, value);
+    return _conditionKeyTracker.containsKey(conditionKey);
   }
 
   FilterConditionsState _addConditionToActiveConditions(
@@ -175,6 +170,10 @@ class FilterConditionsBloc<T extends ItemSourceState>
     );
   }
 
+  Map<String, List<String>> _generateFilterPropertiesMap() {
+    return {for (var item in _filterProperties) item: []};
+  }
+
   FilterConditionsState _removeConditionFromActiveConditions(
     RemoveCondition event,
   ) {
@@ -212,25 +211,13 @@ class FilterConditionsBloc<T extends ItemSourceState>
       availableConditions: currentState.availableConditions,
     );
   }
+}
 
-  Map<String, List<String>> _generateFilterPropertiesMap() {
-    return Map.fromIterable(
-      _filterProperties,
-      key: (item) => item,
-      value: (_) => [],
-    );
-  }
+/// Available filter modes that can be attached to a condition key.
+enum FilterMode {
+  /// Designates a condition to be filtered subtractively.
+  and,
 
-  /// Helper that checks whether a [value] for a given [property] exists in
-  /// the current state as an active condition.
-  bool isConditionActive(String property, String value) {
-    final conditionKey = generateConditionKey(property, value);
-    return _conditionKeyTracker.containsKey(conditionKey);
-  }
-
-  @override
-  Future<void> close() async {
-    await _sourceSubscription?.cancel();
-    return super.close();
-  }
+  /// Designates a condition to be filtered additively (the default).
+  or,
 }
