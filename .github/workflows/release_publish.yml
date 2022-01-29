@@ -35,7 +35,7 @@ jobs:
         id: changelog
         uses: mindsers/changelog-reader-action@v2
         with:
-          version: v${{ steps.local_version.outputs.version }}
+          version: ${{ steps.local_version.outputs.version }}
           path: ./CHANGELOG.md
         env:
           test: ${{ steps.remote_version.outputs.version }}
