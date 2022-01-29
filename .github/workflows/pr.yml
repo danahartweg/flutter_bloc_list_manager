@@ -32,5 +32,5 @@ jobs:
       - name: Validating changelog
         uses: zattoo/changelog@v1
         with:
-          exclude: ".github/**"
           token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: ".github"
