@@ -17,8 +17,8 @@ class AddCondition extends FilterConditionsEvent {
 
   /// {@macro addcondition}
   const AddCondition({
-    @required this.property,
-    @required this.value,
+    required this.property,
+    required this.value,
     this.mode = FilterMode.or,
   });
 
@@ -57,9 +57,9 @@ class RefreshConditions extends FilterConditionsEvent {
 
   /// {@macro refreshconditions}
   const RefreshConditions({
-    @required this.availableConditions,
-    @required this.activeAndConditions,
-    @required this.activeOrConditions,
+    required this.availableConditions,
+    required this.activeAndConditions,
+    required this.activeOrConditions,
   });
 
   @override
@@ -84,8 +84,8 @@ class RemoveCondition extends FilterConditionsEvent {
 
   /// {@macro removecondition}
   const RemoveCondition({
-    @required this.property,
-    @required this.value,
+    required this.property,
+    required this.value,
   });
 
   @override

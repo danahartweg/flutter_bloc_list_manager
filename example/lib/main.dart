@@ -63,10 +63,10 @@ class FilterConditionGroup extends StatelessWidget {
   final Function updateCondition;
 
   FilterConditionGroup({
+    required this.condition,
+    required this.isOptionActive,
+    required this.updateCondition,
     Key key,
-    @required this.condition,
-    @required this.isOptionActive,
-    @required this.updateCondition,
   }) : super(key: key);
 
   @override
@@ -126,7 +126,7 @@ class FilterConditionsSheet extends StatelessWidget {
   // context will now belong to the Scaffold rendering the bottom sheet.
   final FilterConditionsBloc _filterConditionsBloc;
 
-  const FilterConditionsSheet({@required filterConditionsBloc})
+  const FilterConditionsSheet({required filterConditionsBloc})
       : assert(filterConditionsBloc != null),
         _filterConditionsBloc = filterConditionsBloc;
 

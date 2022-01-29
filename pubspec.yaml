@@ -5,7 +5,7 @@ description: >
 homepage: https://github.com/danahartweg/flutter_bloc_list_manager
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -14,7 +14,6 @@ dependencies:
   bloc: ^8.0.2
   equatable: ^2.0.3
   flutter_bloc: ^8.0.1
-  meta: ^1.7.0
 
 dev_dependencies:
   flutter_test:

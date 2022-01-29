@@ -1,6 +1,6 @@
 /// Combines the give [property] and [value] into a storage key
 /// (`$property::$value`) to track active conditions.
-String generateConditionKey(String property, String value) {
+String generateConditionKey(String property, String? value) {
   return '$property::$value';
 }
 

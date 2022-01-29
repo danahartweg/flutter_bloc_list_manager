@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 import '../filter_conditions/filter_conditions_bloc.dart';
 import '../item_source.dart';
@@ -32,20 +31,17 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
   final Bloc _sourceBloc;
   final List<String> _searchProperties;
 
-  StreamSubscription _filterConditionsSubscription;
-  StreamSubscription _searchQuerySubscription;
-  StreamSubscription _sourceSubscription;
+  late StreamSubscription _filterConditionsSubscription;
+  late StreamSubscription _searchQuerySubscription;
+  late StreamSubscription _sourceSubscription;
 
   /// {@macro itemlistbloc}
   ItemListBloc({
-    @required FilterConditionsBloc filterConditionsBloc,
-    @required SearchQueryCubit searchQueryCubit,
-    @required Bloc sourceBloc,
-    List<String> searchProperties,
-  })  : assert(filterConditionsBloc != null),
-        assert(searchQueryCubit != null),
-        assert(sourceBloc != null),
-        _filterConditionsBloc = filterConditionsBloc,
+    required FilterConditionsBloc filterConditionsBloc,
+    required SearchQueryCubit searchQueryCubit,
+    required Bloc sourceBloc,
+    List<String> searchProperties = const [],
+  })  : _filterConditionsBloc = filterConditionsBloc,
         _searchQueryCubit = searchQueryCubit,
         _sourceBloc = sourceBloc,
         _searchProperties = searchProperties,
@@ -68,8 +64,7 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
         return emit(const NoSourceItems());
       }
 
-      final items = (_sourceBloc.state as T).items;
-      final filterResults = _filterSource(items);
+      final filterResults = _filterSource(_sourceBloc.state.items);
       final searchResults =
           _searchSource(_searchQueryCubit.state, filterResults);
 
@@ -81,9 +76,9 @@ class ItemListBloc<I extends ItemClassWithAccessor, T extends ItemSourceState>
 
   @override
   Future<void> close() async {
-    await _filterConditionsSubscription?.cancel();
-    await _searchQuerySubscription?.cancel();
-    await _sourceSubscription?.cancel();
+    await _filterConditionsSubscription.cancel();
+    await _searchQuerySubscription.cancel();
+    await _sourceSubscription.cancel();
 
     return super.close();
   }

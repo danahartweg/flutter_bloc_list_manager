@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 import '../item_source.dart';
 import '../utils.dart';
@@ -27,16 +26,14 @@ class FilterConditionsBloc<T extends ItemSourceState>
   final List<String> _filterProperties;
   final Bloc _sourceBloc;
 
-  StreamSubscription _sourceSubscription;
+  late StreamSubscription _sourceSubscription;
   final Map<String, FilterMode> _conditionKeyTracker = {};
 
   /// {@macro filterconditionsbloc}
   FilterConditionsBloc({
-    @required List<String> filterProperties,
-    @required Bloc sourceBloc,
-  })  : assert(filterProperties != null),
-        assert(sourceBloc != null),
-        _filterProperties = filterProperties,
+    required List<String> filterProperties,
+    required Bloc sourceBloc,
+  })  : _filterProperties = filterProperties,
         _sourceBloc = sourceBloc,
         super(const ConditionsUninitialized()) {
     _sourceSubscription = _sourceBloc.stream.listen((sourceState) {
@@ -57,8 +54,8 @@ class FilterConditionsBloc<T extends ItemSourceState>
           if (value is bool) {
             booleanProperties.add(property);
 
-            availableConditions[property].add('True');
-            availableConditions[property].add('False');
+            availableConditions[property]!.add('True');
+            availableConditions[property]!.add('False');
 
             availableConditionKeys.add(generateConditionKey(property, 'True'));
             availableConditionKeys.add(generateConditionKey(property, 'False'));
@@ -67,7 +64,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
           if (value is String && value.isNotEmpty) {
             final conditionKey = generateConditionKey(property, value);
 
-            availableConditions[property].add(value);
+            availableConditions[property]!.add(value);
             availableConditionKeys.add(conditionKey);
           }
         }
@@ -92,7 +89,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
         // Ensure only unique entries are present and that entries are sorted.
         // Removing duplicates before sorting will save a few cycles.
         availableConditions[property] =
-            availableConditions[property].toSet().toList()..sort();
+            availableConditions[property]!.toSet().toList()..sort();
       }
 
       _conditionKeyTracker
@@ -121,7 +118,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
 
   @override
   Future<void> close() async {
-    await _sourceSubscription?.cancel();
+    await _sourceSubscription.cancel();
     return super.close();
   }
 
@@ -174,7 +171,7 @@ class FilterConditionsBloc<T extends ItemSourceState>
   }
 
   Map<String, List<String>> _generateFilterPropertiesMap() {
-    return { for (var item in _filterProperties) item : [] };
+    return {for (var item in _filterProperties) item: []};
   }
 
   FilterConditionsState _removeConditionFromActiveConditions(

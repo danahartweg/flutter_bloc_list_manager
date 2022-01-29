@@ -28,8 +28,8 @@ void main() {
   );
 
   group('FilterConditionsBloc', () {
-    MockSourceBloc _sourceBloc;
-    StreamController<MockSourceBlocState> _sourceStreamController;
+    late MockSourceBloc _sourceBloc;
+    late StreamController<MockSourceBlocState> _sourceStreamController;
 
     setUp(() {
       _sourceBloc = MockSourceBloc();
@@ -108,7 +108,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id],
-              'extra': [_mockItem1.extra],
+              'extra': [_mockItem1.extra!],
             },
           )
         ],
@@ -150,8 +150,8 @@ void main() {
         build: () {
           whenListen<MockSourceBlocState>(
             _sourceBloc,
-            Stream.value(
-                const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
+            Stream.value(const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
@@ -165,7 +165,11 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
-              'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
+              'extra': [
+                _mockItem1.extra!,
+                _mockItem2.extra!,
+                _mockItem3.extra!
+              ],
             },
           )
         ],
@@ -193,7 +197,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id],
-              'extra': [_mockItem1.extra],
+              'extra': [_mockItem1.extra!],
             },
           ),
           ConditionsInitialized(
@@ -201,7 +205,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem2.id, _mockItem3.id],
-              'extra': [_mockItem2.extra, _mockItem3.extra],
+              'extra': [_mockItem2.extra!, _mockItem3.extra!],
             },
           )
         ],
@@ -214,7 +218,8 @@ void main() {
           filterProperties: ['id', 'extra'],
         ),
         act: (bloc) async {
-          _sourceStreamController.add(const MockSourceBlocClassItems([_mockItem1]));
+          _sourceStreamController
+              .add(const MockSourceBlocClassItems([_mockItem1]));
           await Future.delayed(const Duration());
 
           bloc.add(AddCondition(property: 'id', value: _mockItem1.id));
@@ -234,7 +239,8 @@ void main() {
           ]));
           await Future.delayed(const Duration());
 
-          _sourceStreamController.add(const MockSourceBlocClassItems([_mockItem2]));
+          _sourceStreamController
+              .add(const MockSourceBlocClassItems([_mockItem2]));
           await Future.delayed(const Duration());
         },
         expect: () => [
@@ -243,7 +249,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id],
-              'extra': [_mockItem1.extra],
+              'extra': [_mockItem1.extra!],
             },
           ),
           ConditionsInitialized(
@@ -253,7 +259,7 @@ void main() {
             },
             availableConditions: {
               'id': [_mockItem1.id],
-              'extra': [_mockItem1.extra],
+              'extra': [_mockItem1.extra!],
             },
           ),
           ConditionsInitialized(
@@ -265,7 +271,7 @@ void main() {
             },
             availableConditions: {
               'id': [_mockItem1.id],
-              'extra': [_mockItem1.extra],
+              'extra': [_mockItem1.extra!],
             },
           ),
           ConditionsInitialized(
@@ -282,9 +288,9 @@ void main() {
                 _mockItem3.id,
               ],
               'extra': [
-                _mockItem1.extra,
-                _mockItem2.extra,
-                _mockItem3.extra,
+                _mockItem1.extra!,
+                _mockItem2.extra!,
+                _mockItem3.extra!,
               ],
             },
           ),
@@ -293,7 +299,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem2.id],
-              'extra': [_mockItem2.extra],
+              'extra': [_mockItem2.extra!],
             },
           )
         ],
@@ -304,8 +310,8 @@ void main() {
         build: () {
           whenListen<MockSourceBlocState>(
             _sourceBloc,
-            Stream.value(
-                const MockSourceBlocClassItems([_mockItem1, _mockItem1, _mockItem2])),
+            Stream.value(const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem1, _mockItem2])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
@@ -319,7 +325,7 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id],
-              'extra': [_mockItem1.extra, _mockItem2.extra],
+              'extra': [_mockItem1.extra!, _mockItem2.extra!],
             },
           )
         ],
@@ -330,8 +336,8 @@ void main() {
         build: () {
           whenListen<MockSourceBlocState>(
             _sourceBloc,
-            Stream.value(
-                const MockSourceBlocClassItems([_mockItem3, _mockItem2, _mockItem1])),
+            Stream.value(const MockSourceBlocClassItems(
+                [_mockItem3, _mockItem2, _mockItem1])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
@@ -345,7 +351,11 @@ void main() {
             activeOrConditions: const {},
             availableConditions: {
               'id': [_mockItem1.id, _mockItem2.id, _mockItem3.id],
-              'extra': [_mockItem1.extra, _mockItem2.extra, _mockItem3.extra],
+              'extra': [
+                _mockItem1.extra!,
+                _mockItem2.extra!,
+                _mockItem3.extra!
+              ],
             },
           )
         ],
@@ -356,8 +366,8 @@ void main() {
         build: () {
           whenListen<MockSourceBlocState>(
             _sourceBloc,
-            Stream.value(
-                const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3])),
+            Stream.value(const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3])),
           );
 
           return FilterConditionsBloc<MockSourceBlocClassItems>(
@@ -414,7 +424,8 @@ void main() {
           sourceBloc: _sourceBloc,
           filterProperties: [],
         ),
-        act: (bloc) => bloc.add(const AddCondition(property: 'id', value: '123')),
+        act: (bloc) =>
+            bloc.add(const AddCondition(property: 'id', value: '123')),
         expect: () => [const ConditionsUninitialized()],
       );
 
@@ -666,7 +677,8 @@ void main() {
     });
 
     test('closes the source bloc subscription', () {
-      final stream = Stream.value(const MockSourceBlocNoItems()).asBroadcastStream();
+      final stream =
+          Stream.value(const MockSourceBlocNoItems()).asBroadcastStream();
       final onDoneCallback = expectAsync0(() {});
 
       whenListen<MockSourceBlocState>(_sourceBloc, stream);

@@ -29,9 +29,9 @@ void main() {
   );
 
   group('ItemListBloc', () {
-    MockFilterConditionsBloc _filterConditionsBloc;
-    MockSearchQueryCubit _searchQueryCubit;
-    MockSourceBloc _sourceBloc;
+    late MockFilterConditionsBloc _filterConditionsBloc;
+    late MockSearchQueryCubit _searchQueryCubit;
+    late MockSourceBloc _sourceBloc;
 
     setUp(() {
       _filterConditionsBloc = MockFilterConditionsBloc();
@@ -58,35 +58,17 @@ void main() {
     blocTest<ItemListBloc, ItemListState>(
       'requires initialized filter conditions',
       build: () {
+        whenListen<FilterConditionsState>(
+          _filterConditionsBloc,
+          Stream.value(
+            const ConditionsUninitialized(),
+          ),
+        );
+
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(const MockSourceBlocClassItems([_mockItem1])),
         );
-
-        return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
-          filterConditionsBloc: _filterConditionsBloc,
-          searchQueryCubit: _searchQueryCubit,
-          sourceBloc: _sourceBloc,
-        );
-      },
-      skip: 1,
-      expect: () => [],
-    );
-
-    blocTest<ItemListBloc, ItemListState>(
-      'requires a source bloc state with items',
-      build: () {
-        whenListen<FilterConditionsState>(
-          _filterConditionsBloc,
-          Stream.value(
-            const ConditionsInitialized(
-              activeAndConditions: {},
-              activeOrConditions: {},
-              availableConditions: {},
-            ),
-          ),
-        );
-        whenListen<String>(_searchQueryCubit, Stream.value(''));
 
         return ItemListBloc<MockItemClass, MockSourceBlocClassItems>(
           filterConditionsBloc: _filterConditionsBloc,
@@ -147,7 +129,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -182,7 +165,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -218,7 +202,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -253,7 +238,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -290,7 +276,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -324,7 +311,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -359,7 +347,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -391,7 +380,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -428,7 +418,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -468,7 +459,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 
@@ -505,7 +497,8 @@ void main() {
         whenListen<MockSourceBlocState>(
           _sourceBloc,
           Stream.value(
-            const MockSourceBlocClassItems([_mockItem1, _mockItem2, _mockItem3]),
+            const MockSourceBlocClassItems(
+                [_mockItem1, _mockItem2, _mockItem3]),
           ),
         );
 

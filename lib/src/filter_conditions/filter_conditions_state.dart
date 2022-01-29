@@ -24,9 +24,9 @@ class ConditionsInitialized extends FilterConditionsState {
 
   /// {@macro conditionsinitialized}
   const ConditionsInitialized({
-    @required this.availableConditions,
-    @required this.activeAndConditions,
-    @required this.activeOrConditions,
+    required this.availableConditions,
+    required this.activeAndConditions,
+    required this.activeOrConditions,
   });
 
   @override
