@@ -30,7 +30,7 @@ jobs:
           min_coverage: 75
 
       - name: Validating changelog
-        uses: zattoo/changelog@v1.7
+        uses: zattoo/changelog@1.7.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           exclude: ".github/**/*"
