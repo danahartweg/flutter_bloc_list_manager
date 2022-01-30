@@ -33,4 +33,4 @@ jobs:
         uses: zattoo/changelog@1.7.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          exclude: 'analysis_options.yaml, CONTRIBUTING.md, coverage/**, .gitignore, .github/**, .metadata'
+          exclude: 'analysis_options.yaml, CONTRIBUTING.md, coverage/**, .gitignore, .github/**/*, .metadata'
