@@ -1,15 +1,23 @@
 name: flutter_bloc_list_manager_example
 version: 0.0.1
+publish_to: none
 description: >
-  Example of how to integrate flutter_bloc_list_manger in an application.
+  Example of how to integrate flutter_bloc_list_manager in an application.
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  equatable: ^1.2.0
-  flutter_bloc: ^5.0.0
-  flutter_bloc_list_manager: ^0.1.0
+  bloc: ^8.0.2
+  equatable: ^2.0.3
+  flutter_bloc: ^8.0.1
+  flutter_bloc_list_manager: ^0.5.0
+
+dev_dependencies:
+  flutter_lints: ^1.0.4
+
+flutter:
+  uses-material-design: true

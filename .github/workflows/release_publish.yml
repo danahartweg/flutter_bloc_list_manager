@@ -52,7 +52,7 @@ jobs:
 
       - name: Publish
         if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
-        uses: k-paxian/dart-package-publisher@v1.2
+        uses: sakebook/actions-flutter-pub-publisher@v1.4.0
         with:
-          skipTests: true
-          credentialJson: ${{ secrets.PUB_CREDENTIALS_JSON }}
+          credential: ${{ secrets.PUB_CREDENTIALS_JSON }}
+          skip_test: true
