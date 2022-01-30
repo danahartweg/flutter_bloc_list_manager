@@ -24,13 +24,13 @@ jobs:
       - name: Test
         run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
 
-      - name: Validating changelog
-        uses: zattoo/changelog@1.7.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          exclude: 'analysis_options.yaml, CONTRIBUTING.md, .gitignore, .github/**, .metadata'
-
       - name: Code coverage
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
         with:
           min_coverage: 75
+
+      - name: Validating changelog
+        uses: zattoo/changelog@1.7.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: 'analysis_options.yaml, CONTRIBUTING.md, coverage/**, .gitignore, .github/**, .metadata'
