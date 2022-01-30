@@ -13,8 +13,8 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "2.8.x"
-          channel: "stable"
+          flutter-version: '2.8.x'
+          channel: 'stable'
 
       - name: Parse local version
         id: local_version

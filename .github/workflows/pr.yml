@@ -12,8 +12,8 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "2.8.x"
-          channel: "stable"
+          flutter-version: '2.8.x'
+          channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
@@ -33,4 +33,4 @@ jobs:
         uses: zattoo/changelog@1.7.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          exclude: "./.github/"
+          exclude: 'analysis_options.yaml, CONTRIBUTING.md, .gitignore, .github/**, .metadata'
