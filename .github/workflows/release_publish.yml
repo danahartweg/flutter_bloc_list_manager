@@ -52,7 +52,7 @@ jobs:
 
       - name: Publish
         if: ${{ steps.local_version.outputs.version != steps.remote_version.outputs.version }}
-        uses: sakebook/actions-flutter-pub-publisher@v1.4.0
+        uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
           credential: ${{ secrets.PUB_CREDENTIALS_JSON }}
           skip_test: true
