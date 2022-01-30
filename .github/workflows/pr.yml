@@ -29,6 +29,9 @@ jobs:
         with:
           min_coverage: 75
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Validating changelog
         uses: zattoo/changelog@1.7.0
         with:
