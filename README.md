@@ -1,7 +1,6 @@
 # Flutter Bloc List Manager
 
 [![Pub](https://img.shields.io/pub/v/flutter_bloc_list_manager.svg)](https://pub.dev/packages/flutter_bloc_list_manager)
-[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 A Flutter package built on top of [flutter_bloc](https://pub.dev/packages/flutter_bloc) that makes it easy to manage filtering and searching a list of items while allowing you to concentrate on building your UI.
