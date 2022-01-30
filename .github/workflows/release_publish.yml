@@ -55,5 +55,4 @@ jobs:
         uses: k-paxian/dart-package-publisher@v1.2
         with:
           skipTests: true
-          accessToken: ${{ secrets.PUB_OAUTH_ACCESS_TOKEN }}
-          refreshToken: ${{ secrets.PUB_OAUTH_REFRESH_TOKEN }}
+          credentialJson: ${{ secrets.PUB_CREDENTIALS_JSON }}
