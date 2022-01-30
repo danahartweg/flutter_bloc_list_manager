@@ -1,6 +1,5 @@
 library flutter_bloc_list_manager;
 
-/// Make sure this would still fail changelog checking.
 export 'src/filter_conditions/filter_conditions_bloc.dart'
     hide RefreshConditions;
 export 'src/item_list/item_list_bloc.dart';
