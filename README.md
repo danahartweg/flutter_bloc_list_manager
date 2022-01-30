@@ -33,23 +33,23 @@ _Example_
 BlocProvider<SourceBloc>(
   create: (_) => SourceBloc(),
   child: ListManager<ItemClass, SourceLoaded, SourceBloc>(
-    filterProperties: ['property1'],
-    searchProperties: ['property2'],
+    filterProperties: const ['property1'],
+    searchProperties: const ['property2'],
     child: Column(
       children: [
         BlocBuilder<FilterConditionsBloc, FilterConditionsState>(
           builder: (context, state) {
-            return Text('Render filter conditions UI.');
+            return const Text('Render filter conditions UI.');
           },
         ),
         BlocBuilder<SearchQueryCubit, String>(
           builder: (context, state) {
-            return Text('Render Search UI.');
+            return const Text('Render Search UI.');
           },
         ),
         BlocBuilder<ItemListBloc, ItemListState>(
           builder: (context, state) {
-            return Text('Render list UI.');
+            return const Text('Render list UI.');
           },
         ),
       ],
@@ -147,7 +147,7 @@ Without a much more sophisticated means to assemble filter queries, there is no 
 
 Practically, what does this mean?
 
-Your list of items will first be filtered such that *every item* matching *any* single `or` condition is sent through. The resulting list will then be filtered such that *every item* matching *all* `and` conditions are sent through. The `and` conditions technically refine the resulting list and the `or` conditions generate the first pass of the list that should be refined.
+Your list of items will first be filtered such that _every item_ matching _any_ single `or` condition is sent through. The resulting list will then be filtered such that _every item_ matching _all_ `and` conditions are sent through. The `and` conditions technically refine the resulting list and the `or` conditions generate the first pass of the list that should be refined.
 
 _Example_
 
@@ -155,11 +155,11 @@ _Example_
 BlocBuilder<ItemListBloc, ItemListState>(
   builder: (_, state) {
     if (state is NoSourceItems) {
-      return Text('No source items');
+      return const Text('No source items');
     }
 
     if (state is ItemEmptyState) {
-      return Text('No matching results');
+      return const Text('No matching results');
     }
 
     if (state is ItemResults<ItemClass>) {
@@ -194,27 +194,23 @@ class ItemClass extends Equatable implements ItemClassWithAccessor {
   final String name;
 
   const ItemClass({
-    this.id,
-    this.name,
+    required this.id,
+    required this.name,
   });
+
+  @override
+  List<Object> get props => [id, name];
 
   dynamic operator [](String prop) {
     switch (prop) {
       case 'id':
         return id;
-        break;
       case 'name':
         return name;
-        break;
       default:
-        throw ArgumentError(
-          'Property `$prop` does not exist on ItemClass.',
-        );
+        throw ArgumentError('Property `$prop` does not exist on ItemClass.');
     }
   }
-
-  @override
-  List<Object> get props => [id, name];
 }
 ```
 
