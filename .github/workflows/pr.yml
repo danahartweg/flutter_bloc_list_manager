@@ -33,5 +33,4 @@ jobs:
         uses: zattoo/changelog@1.7.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          sources: '/home/runner/work/flutter_bloc_list_manager/flutter_bloc_list_manager/'
           exclude: 'analysis_options.yaml, CONTRIBUTING.md, coverage/**, .gitignore, .github/**, .metadata'
